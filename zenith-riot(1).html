@@ -1,0 +1,2634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZENITH // RIOT EDITION</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;500;600;700;800;900&family=Barlow:wght@300;400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════
+   ZENITH OS — RIOT EDITION
+   "Heroic Utility"
+   Aesthetic: Valorant × League Client × 2XKO
+═══════════════════════════════════════════════════ */
+:root {
+  /* Foundations */
+  --bg:        #0a0608;
+  --bg2:       #120d0f;
+  --bg3:       #1a1115;
+  --bg4:       #221820;
+  --panel:     rgba(18,13,15,0.96);
+  --panel2:    rgba(26,17,21,0.9);
+
+  /* Borders */
+  --line:      rgba(255,255,255,0.07);
+  --line2:     rgba(255,255,255,0.13);
+
+  /* Text */
+  --text:      #f0eae8;
+  --muted:     #7a6f72;
+  --muted2:    #a89fa3;
+
+  /* Module accents — one per module, no sharing */
+  --gold:      #c8a84b;
+  --gold2:     #e8c96a;
+  --gold-dim:  rgba(200,168,75,0.12);
+  --gold-glow: rgba(200,168,75,0.35);
+
+  --red:       #ff4655;
+  --red2:      #ff6b78;
+  --red-dim:   rgba(255,70,85,0.12);
+  --red-glow:  rgba(255,70,85,0.4);
+
+  --teal:      #00c8be;
+  --teal2:     #3de8e0;
+  --teal-dim:  rgba(0,200,190,0.12);
+  --teal-glow: rgba(0,200,190,0.35);
+
+  --green:     #22e5a0;
+  --green2:    #5ff7c0;
+  --green-dim: rgba(34,229,160,0.12);
+
+  --blue:      #4fc8ff;
+  --blue-dim:  rgba(79,200,255,0.12);
+
+  --purple:    #b87cff;
+  --purple-dim:rgba(184,124,255,0.12);
+
+  /* Typography */
+  --fd: 'Barlow Condensed', sans-serif;
+  --fb: 'Barlow', sans-serif;
+  --fm: 'Share Tech Mono', monospace;
+
+  /* Layout */
+  --rail-w: 56px;
+  --topbar-h: 48px;
+  --slash-angle: -12deg;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { font-size: 16px; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--fb);
+  min-height: 100vh;
+  overflow: hidden;
+  cursor: default;
+}
+
+/* ─── SCAN LINE OVERLAY ─── */
+body::before {
+  content:'';
+  position:fixed; inset:0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.03) 2px,
+    rgba(0,0,0,0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ─── CORNER MARKS ─── */
+body::after {
+  content:'';
+  position:fixed; inset:0;
+  background:
+    linear-gradient(135deg, rgba(200,168,75,0.15) 0%, transparent 40px) top left,
+    linear-gradient(225deg, rgba(200,168,75,0.15) 0%, transparent 40px) top right,
+    linear-gradient(315deg, rgba(200,168,75,0.15) 0%, transparent 40px) bottom right,
+    linear-gradient(45deg,  rgba(200,168,75,0.15) 0%, transparent 40px) bottom left;
+  background-repeat: no-repeat;
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 9998;
+}
+
+/* ══════════════════════════════
+   APP SHELL
+══════════════════════════════ */
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  position: relative;
+}
+
+/* ── TOPBAR ── */
+.topbar {
+  height: var(--topbar-h);
+  background: var(--bg2);
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 0;
+  position: relative;
+  z-index: 200;
+  flex-shrink: 0;
+}
+
+/* diagonal gold slash on left */
+.topbar::before {
+  content:'';
+  position:absolute;
+  left:0; top:0; bottom:0;
+  width: 4px;
+  background: var(--gold);
+  box-shadow: 0 0 12px var(--gold-glow), 0 0 24px var(--gold-glow);
+}
+
+.topbar-wordmark {
+  font-family: var(--fd);
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: 6px;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-left: 12px;
+  margin-right: 20px;
+  text-shadow: 0 0 16px var(--gold-glow);
+  flex-shrink: 0;
+}
+
+.topbar-sep {
+  width: 1px;
+  height: 24px;
+  background: var(--line2);
+  margin: 0 14px;
+  flex-shrink: 0;
+}
+
+.topbar-module-label {
+  font-family: var(--fd);
+  font-size: .95rem;
+  font-weight: 600;
+  letter-spacing: 4px;
+  color: var(--text);
+  text-transform: uppercase;
+  flex: 1;
+  transition: color .15s;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.topbar-badge {
+  font-family: var(--fm);
+  font-size: .6rem;
+  letter-spacing: 2px;
+  color: var(--muted);
+  padding: 3px 8px;
+  border: 1px solid var(--line);
+  clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+  background: var(--bg3);
+}
+
+.topbar-clock {
+  font-family: var(--fm);
+  font-size: .72rem;
+  color: var(--gold);
+  letter-spacing: 2px;
+  min-width: 55px;
+  text-align: right;
+}
+
+.topbar-back-btn {
+  font-family: var(--fd);
+  font-size: .75rem;
+  font-weight: 600;
+  letter-spacing: 3px;
+  color: var(--muted2);
+  background: none;
+  border: 1px solid var(--line2);
+  padding: 5px 14px;
+  cursor: pointer;
+  clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+  transition: all .15s;
+  display: none;
+}
+.topbar-back-btn:hover { color: var(--gold); border-color: var(--gold); box-shadow: 0 0 10px var(--gold-glow); }
+.topbar-back-btn.visible { display: block; }
+
+/* ── BODY AREA ── */
+.body-area {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ── ICON RAIL ── */
+.icon-rail {
+  width: var(--rail-w);
+  background: var(--bg2);
+  border-right: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 0;
+  gap: 2px;
+  z-index: 100;
+  flex-shrink: 0;
+}
+
+.rail-item {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 1px solid transparent;
+  position: relative;
+  transition: all .15s;
+  clip-path: polygon(4px 0%, 100% 0%, calc(100% - 4px) 100%, 0% 100%);
+  font-size: 1.1rem;
+}
+
+.rail-item:hover {
+  background: var(--bg4);
+  border-color: var(--line2);
+}
+
+.rail-item.active {
+  background: var(--gold-dim);
+  border-color: var(--gold);
+}
+
+.rail-item.active::before {
+  content:'';
+  position:absolute;
+  left:-1px; top:50%;
+  transform:translateY(-50%);
+  width:3px; height:20px;
+  background:var(--gold);
+  box-shadow:0 0 8px var(--gold-glow);
+}
+
+.rail-item[data-module="finance"].active   { background:var(--gold-dim);   border-color:var(--gold);   }
+.rail-item[data-module="finance"].active::before  { background:var(--gold);   box-shadow:0 0 8px var(--gold-glow); }
+.rail-item[data-module="chronos"].active  { background:var(--teal-dim);  border-color:var(--teal);  }
+.rail-item[data-module="chronos"].active::before  { background:var(--teal);  box-shadow:0 0 8px var(--teal-glow); }
+.rail-item[data-module="health"].active   { background:var(--green-dim); border-color:var(--green); }
+.rail-item[data-module="health"].active::before   { background:var(--green); box-shadow:0 0 8px rgba(34,229,160,.4); }
+.rail-item[data-module="quests"].active   { background:var(--red-dim);   border-color:var(--red);   }
+.rail-item[data-module="quests"].active::before   { background:var(--red);   box-shadow:0 0 8px var(--red-glow); }
+.rail-item[data-module="inventory"].active{ background:var(--blue-dim);  border-color:var(--blue);  }
+.rail-item[data-module="inventory"].active::before{ background:var(--blue);  box-shadow:0 0 8px rgba(79,200,255,.35); }
+.rail-item[data-module="study"].active    { background:var(--purple-dim);border-color:var(--purple); }
+
+.rail-tooltip {
+  position: absolute;
+  left: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--bg3);
+  border: 1px solid var(--line2);
+  padding: 4px 10px;
+  font-family: var(--fd);
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: var(--text);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .1s;
+  z-index: 500;
+  clip-path: polygon(4px 0%, 100% 0%, calc(100% - 4px) 100%, 0% 100%);
+}
+.rail-item:hover .rail-tooltip { opacity: 1; }
+
+.rail-spacer { flex: 1; }
+
+/* ── MAIN CONTENT ── */
+.main-area {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ── MODULE SCREENS ── */
+.module-screen {
+  position: absolute;
+  inset: 0;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  animation: screenIn .2s cubic-bezier(0.16,1,0.3,1) both;
+}
+.module-screen.active { display: flex; }
+
+@keyframes screenIn {
+  from { opacity:0; transform:translateX(12px); }
+  to   { opacity:1; transform:translateX(0); }
+}
+
+/* ══════════════════════════════
+   LOADOUT SCREEN (was ZOS menu)
+══════════════════════════════ */
+#screen-loadout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+}
+
+#screen-loadout.dismissed {
+  animation: loadoutOut .25s cubic-bezier(0.4,0,1,1) both;
+}
+
+@keyframes loadoutOut {
+  to { opacity:0; transform:scale(0.96); }
+}
+
+.loadout-bg {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 40%, rgba(200,168,75,0.06) 0%, transparent 70%),
+    repeating-linear-gradient(
+      var(--slash-angle),
+      transparent 0px,
+      transparent 40px,
+      rgba(255,255,255,0.015) 40px,
+      rgba(255,255,255,0.015) 41px
+    );
+}
+
+.loadout-wordmark {
+  font-family: var(--fd);
+  font-size: 4rem;
+  font-weight: 900;
+  letter-spacing: 20px;
+  color: var(--gold);
+  text-shadow: 0 0 40px var(--gold-glow), 0 0 80px rgba(200,168,75,0.15);
+  position: relative;
+  margin-bottom: 4px;
+  animation: wordmarkIn .5s .1s cubic-bezier(0.16,1,0.3,1) both;
+}
+
+.loadout-tagline {
+  font-family: var(--fm);
+  font-size: .65rem;
+  letter-spacing: 5px;
+  color: var(--muted);
+  margin-bottom: 60px;
+  animation: wordmarkIn .5s .2s cubic-bezier(0.16,1,0.3,1) both;
+}
+
+@keyframes wordmarkIn {
+  from { opacity:0; transform:translateY(16px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+.loadout-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 180px);
+  gap: 3px;
+  position: relative;
+  z-index: 1;
+}
+
+.loadout-tile {
+  height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 14px 16px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  background: var(--bg2);
+  border: 1px solid var(--line);
+  transition: all .15s;
+}
+
+.loadout-tile::before {
+  content:'';
+  position:absolute;
+  top:-1px; left:-1px; right:-1px;
+  height: 3px;
+  background: var(--tile-color, var(--gold));
+  opacity: 0;
+  transition: opacity .15s;
+}
+
+.loadout-tile::after {
+  content:'';
+  position:absolute;
+  inset:0;
+  background: radial-gradient(circle at 30% 80%, var(--tile-bg, rgba(200,168,75,0.08)) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity .2s;
+}
+
+.loadout-tile:hover { border-color: var(--tile-color, var(--gold)); }
+.loadout-tile:hover::before { opacity: 1; box-shadow: 0 0 12px var(--tile-glow, var(--gold-glow)); }
+.loadout-tile:hover::after  { opacity: 1; }
+.loadout-tile:hover .lt-icon { text-shadow: 0 0 20px var(--tile-glow, var(--gold-glow)); }
+.loadout-tile:hover .lt-label { color: var(--tile-color, var(--gold)); }
+
+.loadout-tile.disabled { opacity: .45; cursor: default; pointer-events: none; }
+
+.lt-icon {
+  font-size: 1.6rem;
+  position: absolute;
+  top: 14px; right: 14px;
+  transition: text-shadow .15s;
+  z-index: 1;
+}
+.lt-label {
+  font-family: var(--fd);
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 4px;
+  color: var(--muted2);
+  text-transform: uppercase;
+  transition: color .15s;
+  position: relative;
+  z-index: 1;
+}
+.lt-sub {
+  font-family: var(--fm);
+  font-size: .5rem;
+  letter-spacing: 2px;
+  color: var(--muted);
+  margin-top: 2px;
+  position: relative;
+  z-index: 1;
+}
+.lt-badge {
+  position: absolute;
+  top: 8px; left: 8px;
+  font-family: var(--fm);
+  font-size: .45rem;
+  letter-spacing: 2px;
+  padding: 2px 6px;
+  clip-path: polygon(4px 0%, 100% 0%, calc(100% - 4px) 100%, 0% 100%);
+  z-index: 1;
+}
+.lt-badge.live  { background: var(--gold-dim); color: var(--gold); border: 1px solid var(--gold); }
+.lt-badge.soon  { background: var(--bg3); color: var(--muted); border: 1px solid var(--line); }
+
+.loadout-greeting {
+  font-family: var(--fd);
+  font-size: .75rem;
+  font-weight: 600;
+  letter-spacing: 4px;
+  color: var(--muted);
+  margin-top: 40px;
+  text-transform: uppercase;
+  animation: wordmarkIn .5s .4s cubic-bezier(0.16,1,0.3,1) both;
+  opacity: 0;
+  animation-fill-mode: both;
+}
+
+/* ══════════════════════════════
+   FINANCE MODULE
+══════════════════════════════ */
+.finance-layout {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ── Finance Sub-Nav ── */
+.sub-nav {
+  width: 180px;
+  flex-shrink: 0;
+  background: var(--bg2);
+  border-right: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  padding: 16px 0;
+  overflow-y: auto;
+  gap: 1px;
+}
+
+.sub-nav-section {
+  font-family: var(--fm);
+  font-size: .45rem;
+  letter-spacing: 3px;
+  color: var(--muted);
+  padding: 12px 14px 4px;
+  text-transform: uppercase;
+}
+
+.sub-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  font-family: var(--fd);
+  font-size: .85rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: var(--muted2);
+  cursor: pointer;
+  transition: all .12s;
+  border-left: 2px solid transparent;
+  text-transform: uppercase;
+  position: relative;
+}
+.sub-nav-item:hover  { color: var(--text); background: var(--bg3); }
+.sub-nav-item.active { color: var(--gold); border-left-color: var(--gold); background: var(--gold-dim); }
+.sub-nav-item .sni-icon { font-size: .9rem; width: 18px; text-align: center; flex-shrink: 0; }
+
+/* ── Finance Content ── */
+.fin-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 28px;
+}
+
+/* Scrollbar */
+.fin-content::-webkit-scrollbar { width: 4px; }
+.fin-content::-webkit-scrollbar-track { background: transparent; }
+.fin-content::-webkit-scrollbar-thumb { background: var(--bg4); }
+
+.fin-page { display: none; }
+.fin-page.active { display: block; }
+
+/* ── Page header ── */
+.page-hdr {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line);
+  position: relative;
+}
+.page-hdr::after {
+  content:'';
+  position:absolute;
+  bottom:-1px; left:0;
+  width: 60px; height: 2px;
+  background: var(--gold);
+  box-shadow: 0 0 8px var(--gold-glow);
+}
+.page-hdr-title {
+  font-family: var(--fd);
+  font-size: 1.8rem;
+  font-weight: 900;
+  letter-spacing: 6px;
+  color: var(--text);
+  text-transform: uppercase;
+  line-height: 1;
+}
+.page-hdr-sub {
+  font-family: var(--fm);
+  font-size: .55rem;
+  letter-spacing: 2px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+/* ── Stat grid ── */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 3px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: var(--bg2);
+  border: 1px solid var(--line);
+  padding: 16px 18px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color .15s;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
+}
+.stat-card::before {
+  content:'';
+  position:absolute;
+  top:0; left:0; right:0;
+  height:2px;
+  background: var(--card-accent, var(--gold));
+  opacity: .6;
+}
+.stat-card:hover { border-color: var(--card-accent, var(--gold)); }
+.stat-card:hover::before { opacity: 1; }
+
+.stat-label {
+  font-family: var(--fm);
+  font-size: .5rem;
+  letter-spacing: 3px;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.stat-value {
+  font-family: var(--fd);
+  font-size: 1.9rem;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: 1px;
+  line-height: 1;
+}
+.stat-value.positive { color: var(--green); }
+.stat-value.negative { color: var(--red); }
+
+.stat-rank {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+}
+.rank-pip {
+  width: 6px; height: 6px;
+  clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+}
+.rank-pip.up   { background: var(--green); }
+.rank-pip.down { background: var(--red); transform: rotate(180deg); }
+.rank-pip.neutral { background: var(--muted); clip-path: none; border-radius: 50%; }
+.rank-label {
+  font-family: var(--fm);
+  font-size: .5rem;
+  letter-spacing: 1px;
+  color: var(--muted2);
+}
+
+/* ── Data table ── */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 24px;
+}
+.data-table th {
+  font-family: var(--fm);
+  font-size: .45rem;
+  letter-spacing: 3px;
+  color: var(--muted);
+  text-align: left;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--line2);
+  text-transform: uppercase;
+}
+.data-table td {
+  font-family: var(--fb);
+  font-size: .82rem;
+  color: var(--text);
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+}
+.data-table tr:hover td { background: var(--bg3); }
+
+/* ── Action buttons ── */
+.btn {
+  font-family: var(--fd);
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  padding: 8px 20px;
+  cursor: pointer;
+  transition: all .15s;
+  text-transform: uppercase;
+  border: none;
+  clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+}
+.btn-gold {
+  background: var(--gold);
+  color: var(--bg);
+  box-shadow: 0 0 16px var(--gold-glow);
+}
+.btn-gold:hover { background: var(--gold2); box-shadow: 0 0 24px var(--gold-glow); }
+.btn-ghost {
+  background: var(--gold-dim);
+  color: var(--gold);
+  border: 1px solid var(--gold);
+}
+.btn-ghost:hover { background: rgba(200,168,75,0.25); }
+.btn-red {
+  background: var(--red-dim);
+  color: var(--red);
+  border: 1px solid var(--red);
+}
+.btn-red:hover { background: rgba(255,70,85,0.25); }
+
+/* ── Input ── */
+.field-group { margin-bottom: 16px; }
+.field-label {
+  font-family: var(--fm);
+  font-size: .5rem;
+  letter-spacing: 2px;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  display: block;
+}
+.field-input {
+  width: 100%;
+  background: var(--bg3);
+  border: 1px solid var(--line2);
+  color: var(--text);
+  font-family: var(--fm);
+  font-size: .78rem;
+  padding: 9px 12px;
+  outline: none;
+  transition: border-color .15s;
+  clip-path: polygon(4px 0%, 100% 0%, calc(100% - 4px) 100%, 0% 100%);
+}
+.field-input:focus { border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold-dim); }
+
+/* ── Expense log ── */
+.expense-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--bg2);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--cat-color, var(--muted));
+  margin-bottom: 2px;
+  transition: all .12s;
+  cursor: default;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%);
+}
+.expense-row:hover { border-color: var(--line2); background: var(--bg3); }
+.expense-desc { flex: 1; font-size: .85rem; color: var(--text); font-family: var(--fb); }
+.expense-cat  { font-family: var(--fm); font-size: .48rem; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; }
+.expense-amt  { font-family: var(--fd); font-size: 1.1rem; font-weight: 700; color: var(--red2); letter-spacing: 1px; flex-shrink: 0; }
+.expense-del  { background: none; border: none; color: var(--muted); cursor: pointer; font-size: .8rem; padding: 2px 6px; transition: color .1s; flex-shrink: 0; }
+.expense-del:hover { color: var(--red); }
+
+/* ── Budget bar ── */
+.budget-row {
+  margin-bottom: 12px;
+}
+.budget-row-hdr {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+.budget-row-label { font-family: var(--fm); font-size: .55rem; letter-spacing: 2px; color: var(--muted2); text-transform: uppercase; }
+.budget-row-vals  { font-family: var(--fm); font-size: .55rem; letter-spacing: 1px; color: var(--muted); }
+.budget-track {
+  height: 3px;
+  background: var(--bg4);
+  position: relative;
+  overflow: visible;
+}
+.budget-fill {
+  height: 100%;
+  background: var(--gold);
+  box-shadow: 0 0 6px var(--gold-glow);
+  transition: width .4s cubic-bezier(0.16,1,0.3,1);
+}
+.budget-fill.over { background: var(--red); box-shadow: 0 0 6px var(--red-glow); }
+
+/* ── Savings / Goals ── */
+.goal-card {
+  background: var(--bg2);
+  border: 1px solid var(--line);
+  padding: 18px 20px;
+  margin-bottom: 3px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%);
+  transition: border-color .15s;
+}
+.goal-card:hover { border-color: var(--line2); }
+.goal-card.done  { border-left: 3px solid var(--green); }
+.goal-name { font-family: var(--fd); font-size: 1rem; font-weight: 700; letter-spacing: 2px; color: var(--text); flex: 1; }
+.goal-amt  { font-family: var(--fd); font-size: 1.3rem; font-weight: 800; color: var(--gold); letter-spacing: 1px; }
+.goal-progress { font-family: var(--fm); font-size: .5rem; color: var(--muted); letter-spacing: 1px; margin-top: 2px; }
+
+/* ══════════════════════════════
+   QUESTS MODULE  (Red accent)
+══════════════════════════════ */
+.quests-layout {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.quests-sub-nav {
+  width: 180px;
+  flex-shrink: 0;
+  background: var(--bg2);
+  border-right: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  padding: 16px 0;
+  gap: 1px;
+}
+
+.quests-sub-nav .sub-nav-item.active { color: var(--red); border-left-color: var(--red); background: var(--red-dim); }
+.quests-sub-nav .sub-nav-item:hover  { color: var(--red2); }
+
+.quests-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 28px;
+}
+.quests-content::-webkit-scrollbar { width: 4px; }
+.quests-content::-webkit-scrollbar-thumb { background: var(--bg4); }
+
+#screen-quests .page-hdr::after { background: var(--red); box-shadow: 0 0 8px var(--red-glow); }
+
+.quest-card {
+  background: var(--bg2);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--quest-color, var(--red));
+  padding: 0;
+  margin-bottom: 3px;
+  overflow: hidden;
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%);
+  transition: border-color .15s;
+  cursor: default;
+}
+.quest-card:hover { border-color: var(--quest-color, var(--red)); }
+
+.quest-card-body {
+  padding: 14px 18px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  position: relative;
+}
+
+.quest-wallpaper {
+  width: 60px; height: 60px;
+  flex-shrink: 0;
+  background: var(--bg4);
+  overflow: hidden;
+  clip-path: polygon(4px 0%, 100% 0%, calc(100% - 4px) 100%, 0% 100%);
+}
+.quest-wallpaper img { width: 100%; height: 100%; object-fit: cover; }
+
+.quest-info { flex: 1; min-width: 0; }
+.quest-title { font-family: var(--fd); font-size: 1.1rem; font-weight: 700; letter-spacing: 3px; color: var(--text); text-transform: uppercase; }
+.quest-desc  { font-family: var(--fb); font-size: .8rem; color: var(--muted2); margin-top: 3px; line-height: 1.4; }
+.quest-tags  { display: flex; gap: 4px; margin-top: 8px; flex-wrap: wrap; }
+.quest-tag   {
+  font-family: var(--fm);
+  font-size: .42rem;
+  letter-spacing: 2px;
+  color: var(--muted);
+  padding: 2px 8px;
+  border: 1px solid var(--line2);
+  clip-path: polygon(3px 0%, 100% 0%, calc(100% - 3px) 100%, 0% 100%);
+  text-transform: uppercase;
+}
+.quest-tag.priority-high { color: var(--red); border-color: var(--red); background: var(--red-dim); }
+.quest-tag.priority-med  { color: var(--gold); border-color: var(--gold); background: var(--gold-dim); }
+
+.quest-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.quest-xp {
+  font-family: var(--fd);
+  font-size: .9rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: var(--gold);
+}
+.quest-del {
+  background: none; border: none; color: var(--muted); cursor: pointer;
+  font-size: .7rem; padding: 2px 6px; transition: color .1s;
+}
+.quest-del:hover { color: var(--red); }
+
+.quest-progress-bar {
+  height: 2px;
+  background: var(--bg4);
+}
+.quest-progress-fill {
+  height: 100%;
+  background: var(--red);
+  box-shadow: 0 0 6px var(--red-glow);
+  transition: width .4s;
+}
+
+.quest-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  gap: 12px;
+  color: var(--muted);
+}
+.quest-empty-icon { font-size: 2.5rem; opacity: .4; }
+.quest-empty-text { font-family: var(--fd); font-size: 1rem; font-weight: 600; letter-spacing: 4px; color: var(--muted); text-transform: uppercase; }
+
+/* ── Quest modal ── */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(4px);
+  z-index: 800;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+
+.modal-box {
+  background: var(--bg2);
+  border: 1px solid var(--line2);
+  width: min(520px, 95vw);
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 0 100%);
+}
+.modal-box::before {
+  content:'';
+  position:absolute;
+  top:0; left:0; right:0;
+  height:3px;
+  background: var(--modal-accent, var(--gold));
+  box-shadow: 0 0 10px var(--modal-glow, var(--gold-glow));
+}
+
+.modal-hdr {
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.modal-title {
+  font-family: var(--fd);
+  font-size: 1.2rem;
+  font-weight: 800;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+}
+.modal-close {
+  background: none; border: none; color: var(--muted); cursor: pointer;
+  font-size: 1.2rem; transition: color .1s; padding: 4px;
+}
+.modal-close:hover { color: var(--text); }
+.modal-body { padding: 20px 24px; }
+.modal-foot {
+  padding: 16px 24px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* ══════════════════════════════
+   HEALTH MODULE  (Green accent)
+══════════════════════════════ */
+.health-layout {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+.health-sub-nav {
+  width: 180px; flex-shrink:0;
+  background: var(--bg2);
+  border-right: 1px solid var(--line);
+  display: flex; flex-direction: column;
+  padding: 16px 0; gap: 1px;
+}
+.health-sub-nav .sub-nav-item.active { color: var(--green); border-left-color: var(--green); background: var(--green-dim); }
+
+.health-content {
+  flex: 1; overflow-y: auto; padding: 24px 28px;
+}
+.health-content::-webkit-scrollbar { width:4px; }
+.health-content::-webkit-scrollbar-thumb { background: var(--bg4); }
+
+#screen-health .page-hdr::after { background: var(--green); box-shadow: 0 0 8px rgba(34,229,160,.4); }
+
+.vital-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 3px;
+  margin-bottom: 24px;
+}
+.vital-card {
+  background: var(--bg2);
+  border: 1px solid var(--line);
+  padding: 14px 16px;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%);
+  transition: border-color .15s;
+  cursor: pointer;
+}
+.vital-card:hover { border-color: var(--green); }
+.vital-icon  { font-size: 1.2rem; margin-bottom: 6px; }
+.vital-label { font-family: var(--fm); font-size: .45rem; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; margin-bottom: 4px; }
+.vital-val   { font-family: var(--fd); font-size: 1.4rem; font-weight: 800; color: var(--green); }
+.vital-sub   { font-family: var(--fm); font-size: .48rem; color: var(--muted); margin-top: 2px; }
+
+.log-list { display: flex; flex-direction: column; gap: 2px; }
+.log-entry {
+  background: var(--bg2);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--green);
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%);
+}
+.log-entry .le-icon { font-size: 1rem; flex-shrink: 0; }
+.log-entry .le-main { flex: 1; }
+.log-entry .le-title { font-family: var(--fb); font-size: .85rem; color: var(--text); }
+.log-entry .le-sub   { font-family: var(--fm); font-size: .48rem; color: var(--muted); letter-spacing: 1px; margin-top: 2px; }
+.log-entry .le-del   { background: none; border: none; color: var(--muted); cursor: pointer; font-size: .7rem; padding: 2px 6px; transition: color .1s; }
+.log-entry .le-del:hover { color: var(--red); }
+
+/* ══════════════════════════════
+   INVENTORY MODULE  (Blue accent)
+══════════════════════════════ */
+.inventory-layout { display:flex; flex:1; overflow:hidden; }
+.inventory-sub-nav {
+  width:180px; flex-shrink:0;
+  background:var(--bg2);
+  border-right:1px solid var(--line);
+  display:flex; flex-direction:column;
+  padding:16px 0; gap:1px;
+}
+.inventory-sub-nav .sub-nav-item.active { color:var(--blue); border-left-color:var(--blue); background:var(--blue-dim); }
+
+.inventory-content { flex:1; overflow-y:auto; padding:24px 28px; }
+.inventory-content::-webkit-scrollbar { width:4px; }
+.inventory-content::-webkit-scrollbar-thumb { background:var(--bg4); }
+
+#screen-inventory .page-hdr::after { background:var(--blue); box-shadow:0 0 8px rgba(79,200,255,.35); }
+
+.inv-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 3px;
+}
+.inv-card {
+  background: var(--bg2);
+  border: 1px solid var(--line);
+  padding: 14px 16px;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
+  transition: border-color .15s;
+  cursor: pointer;
+}
+.inv-card:hover { border-color: var(--blue); }
+.inv-card-img  { width:100%; height:80px; object-fit:cover; background:var(--bg4); margin-bottom:10px; clip-path:polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,0 100%); }
+.inv-card-name { font-family:var(--fd); font-size:.9rem; font-weight:700; letter-spacing:2px; color:var(--text); text-transform:uppercase; }
+.inv-card-cat  { font-family:var(--fm); font-size:.44rem; letter-spacing:2px; color:var(--blue); margin-top:3px; text-transform:uppercase; }
+
+/* ══════════════════════════════
+   CHRONOS MODULE  (Teal accent)
+══════════════════════════════ */
+.chronos-layout { display:flex; flex:1; overflow:hidden; }
+.chronos-sub-nav {
+  width:180px; flex-shrink:0;
+  background:var(--bg2);
+  border-right:1px solid var(--line);
+  display:flex; flex-direction:column;
+  padding:16px 0; gap:1px;
+}
+.chronos-sub-nav .sub-nav-item.active { color:var(--teal); border-left-color:var(--teal); background:var(--teal-dim); }
+.chronos-content { flex:1; overflow-y:auto; padding:24px 28px; }
+#screen-chronos .page-hdr::after { background:var(--teal); box-shadow:0 0 8px var(--teal-glow); }
+
+/* ── Calendar grid (minimal) ── */
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+.cal-day-hdr {
+  font-family: var(--fm);
+  font-size: .48rem;
+  letter-spacing: 2px;
+  color: var(--muted);
+  text-align: center;
+  padding: 6px 0;
+  text-transform: uppercase;
+}
+.cal-day {
+  min-height: 64px;
+  background: var(--bg2);
+  border: 1px solid var(--line);
+  padding: 6px 8px;
+  cursor: pointer;
+  transition: border-color .12s;
+}
+.cal-day:hover { border-color: var(--teal); }
+.cal-day.today { border-color: var(--teal); background: var(--teal-dim); }
+.cal-day.other-month { opacity: .35; }
+.cal-day-num {
+  font-family: var(--fm);
+  font-size: .58rem;
+  color: var(--muted2);
+  margin-bottom: 3px;
+}
+.cal-day.today .cal-day-num { color: var(--teal); font-weight: 600; }
+.cal-event {
+  font-family: var(--fb);
+  font-size: .6rem;
+  color: var(--text);
+  background: var(--bg4);
+  padding: 1px 5px;
+  margin-bottom: 2px;
+  border-left: 2px solid var(--teal);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ══════════════════════════════
+   CONFIRM / ALERT DIALOGS
+══════════════════════════════ */
+#riotConfirmModal {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(4px);
+  z-index: 9000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+#riotConfirmModal.open { display: flex; }
+#riotConfirmModal .modal-box { --modal-accent: var(--red); --modal-glow: var(--red-glow); }
+
+/* ══════════════════════════════
+   ANIMATIONS
+══════════════════════════════ */
+@keyframes pulse-glow {
+  0%,100% { box-shadow: 0 0 8px var(--gold-glow); }
+  50%      { box-shadow: 0 0 20px var(--gold-glow), 0 0 40px rgba(200,168,75,0.1); }
+}
+
+/* ══════════════════════════════
+   UTILITY
+══════════════════════════════ */
+.hidden { display: none !important; }
+.row    { display:flex; gap:8px; align-items:center; }
+.row-between { display:flex; justify-content:space-between; align-items:center; }
+.mt8  { margin-top: 8px; }
+.mt16 { margin-top: 16px; }
+.mt24 { margin-top: 24px; }
+.mb4  { margin-bottom: 4px; }
+.flex1 { flex: 1; }
+.text-muted { color: var(--muted); font-family: var(--fm); font-size: .55rem; letter-spacing: 1px; }
+.text-gold  { color: var(--gold); }
+.text-red   { color: var(--red); }
+.text-green { color: var(--green); }
+.section-title {
+  font-family: var(--fd);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 4px;
+  color: var(--text);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  margin-top: 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.section-title::after {
+  content:'';
+  flex:1;
+  height:1px;
+  background:var(--line2);
+}
+
+/* ══════════════════════════════
+   QUICK LOG PILL ROW
+══════════════════════════════ */
+.quick-log-row {
+  display: flex;
+  gap: 3px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.quick-log-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: var(--bg3);
+  border: 1px solid var(--line2);
+  color: var(--muted2);
+  font-family: var(--fd);
+  font-size: .7rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all .12s;
+  clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+  text-transform: uppercase;
+}
+.quick-log-btn:hover { color: var(--green); border-color: var(--green); background: var(--green-dim); }
+
+/* ══════════════════════════════
+   RESPONSIVE
+══════════════════════════════ */
+@media (max-width: 600px) {
+  .sub-nav, .quests-sub-nav, .health-sub-nav, .inventory-sub-nav, .chronos-sub-nav {
+    display: none;
+  }
+  .fin-content, .quests-content, .health-content, .inventory-content, .chronos-content {
+    padding: 16px;
+  }
+  .loadout-grid { grid-template-columns: repeat(2, 150px); }
+  .loadout-wordmark { font-size: 2.5rem; letter-spacing: 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════
+     LOADOUT SCREEN
+════════════════════════════════════════ -->
+<div id="screen-loadout">
+  <div class="loadout-bg"></div>
+  <div class="loadout-wordmark">ZENITH</div>
+  <div class="loadout-tagline">SELECT YOUR MODULE // NIGHT SHIFT EDITION</div>
+  <div class="loadout-grid">
+    <div class="loadout-tile" style="--tile-color:var(--gold);--tile-bg:rgba(200,168,75,0.08);--tile-glow:var(--gold-glow);" onclick="launchModule('finance')">
+      <span class="lt-badge live">LIVE</span>
+      <div class="lt-icon">💰</div>
+      <div class="lt-label">Finance</div>
+      <div class="lt-sub">LEDGER ZENITH v39</div>
+    </div>
+    <div class="loadout-tile" style="--tile-color:var(--teal);--tile-bg:rgba(0,200,190,0.08);--tile-glow:var(--teal-glow);" onclick="launchModule('chronos')">
+      <span class="lt-badge live">LIVE</span>
+      <div class="lt-icon">📅</div>
+      <div class="lt-label">Chronos</div>
+      <div class="lt-sub">CALENDAR · TIME ENGINE</div>
+    </div>
+    <div class="loadout-tile" style="--tile-color:var(--green);--tile-bg:rgba(34,229,160,0.08);--tile-glow:rgba(34,229,160,.4);" onclick="launchModule('health')">
+      <span class="lt-badge live">LIVE</span>
+      <div class="lt-icon">🫀</div>
+      <div class="lt-label">Health</div>
+      <div class="lt-sub">VITAE · BODY TRACKER</div>
+    </div>
+    <div class="loadout-tile disabled" style="--tile-color:var(--purple);--tile-bg:rgba(184,124,255,0.08);">
+      <span class="lt-badge soon">SOON</span>
+      <div class="lt-icon">📚</div>
+      <div class="lt-label">Study</div>
+      <div class="lt-sub">BAR PREP · CASE DIGESTS</div>
+    </div>
+    <div class="loadout-tile" style="--tile-color:var(--red);--tile-bg:rgba(255,70,85,0.08);--tile-glow:var(--red-glow);" onclick="launchModule('quests')">
+      <span class="lt-badge live">LIVE</span>
+      <div class="lt-icon">⚔️</div>
+      <div class="lt-label">Quests</div>
+      <div class="lt-sub">LIFE OBJECTIVES</div>
+    </div>
+    <div class="loadout-tile" style="--tile-color:var(--blue);--tile-bg:rgba(79,200,255,0.08);--tile-glow:rgba(79,200,255,.35);" onclick="launchModule('inventory')">
+      <span class="lt-badge live">LIVE</span>
+      <div class="lt-icon">🎒</div>
+      <div class="lt-label">Inventory</div>
+      <div class="lt-sub">ITEMS · WARDROBE · STOCK</div>
+    </div>
+  </div>
+  <div class="loadout-greeting" id="loadoutGreeting">GOOD EVENING, AGENT</div>
+</div>
+
+<!-- ════════════════════════════════════════
+     APP SHELL (post-loadout)
+════════════════════════════════════════ -->
+<div class="app-shell" id="appShell" style="display:none;">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-wordmark">ZENITH</div>
+    <div class="topbar-sep"></div>
+    <div class="topbar-module-label" id="topbarModule">—</div>
+    <div class="topbar-right">
+      <div class="topbar-badge" id="topbarBadge">v39</div>
+      <button class="topbar-back-btn" id="topbarBack" onclick="backToLoadout()">⊞ LOADOUT</button>
+      <div class="topbar-clock" id="topbarClock">00:00</div>
+    </div>
+  </div>
+
+  <!-- BODY -->
+  <div class="body-area">
+    <!-- ICON RAIL -->
+    <div class="icon-rail" id="iconRail">
+      <div class="rail-item" data-module="finance"  onclick="switchModule('finance')"  title="">💰<span class="rail-tooltip">FINANCE</span></div>
+      <div class="rail-item" data-module="chronos"  onclick="switchModule('chronos')"  title="">📅<span class="rail-tooltip">CHRONOS</span></div>
+      <div class="rail-item" data-module="health"   onclick="switchModule('health')"   title="">🫀<span class="rail-tooltip">HEALTH</span></div>
+      <div class="rail-item" data-module="quests"   onclick="switchModule('quests')"   title="">⚔️<span class="rail-tooltip">QUESTS</span></div>
+      <div class="rail-item" data-module="inventory"onclick="switchModule('inventory')" title="">🎒<span class="rail-tooltip">INVENTORY</span></div>
+      <div class="rail-spacer"></div>
+      <div class="rail-item" data-module="settings" onclick="switchModule('settings')" title="">⚙️<span class="rail-tooltip">SETTINGS</span></div>
+    </div>
+
+    <!-- MAIN AREA -->
+    <div class="main-area">
+
+      <!-- ── FINANCE SCREEN ── -->
+      <div class="module-screen" id="screen-finance">
+        <div class="finance-layout">
+          <nav class="sub-nav">
+            <div class="sub-nav-section">Operations</div>
+            <div class="sub-nav-item active" data-fin="dashboard"  onclick="finNav('dashboard')"> <span class="sni-icon">▣</span>Dashboard</div>
+            <div class="sub-nav-item"        data-fin="expenses"   onclick="finNav('expenses')">  <span class="sni-icon">📋</span>Expenses</div>
+            <div class="sub-nav-item"        data-fin="budget"     onclick="finNav('budget')">    <span class="sni-icon">◈</span>Budget</div>
+            <div class="sub-nav-section">Treasury</div>
+            <div class="sub-nav-item"        data-fin="savings"    onclick="finNav('savings')">   <span class="sni-icon">⬡</span>Goals</div>
+            <div class="sub-nav-item"        data-fin="income"     onclick="finNav('income')">    <span class="sni-icon">↑</span>Income</div>
+            <div class="sub-nav-item"        data-fin="debt"       onclick="finNav('debt')">      <span class="sni-icon">↓</span>Debt</div>
+          </nav>
+          <div class="fin-content">
+
+            <!-- Dashboard -->
+            <div class="fin-page active" id="fin-dashboard">
+              <div class="page-hdr">
+                <div>
+                  <div class="page-hdr-title">Dashboard</div>
+                  <div class="page-hdr-sub" id="finPeriodLabel">PERIOD 1 · LOADING</div>
+                </div>
+                <button class="btn btn-ghost" onclick="finNav('expenses')">+ LOG EXPENSE</button>
+              </div>
+              <div class="stat-grid" id="dashStatGrid">
+                <div class="stat-card">
+                  <div class="stat-label">Period Salary</div>
+                  <div class="stat-value" id="dSalary">₱0</div>
+                  <div class="rank-label">current pay period</div>
+                </div>
+                <div class="stat-card" style="--card-accent:var(--red)">
+                  <div class="stat-label">Total Spent</div>
+                  <div class="stat-value negative" id="dSpent">₱0</div>
+                  <div class="stat-rank"><div class="rank-pip neutral"></div><div class="rank-label" id="dSpentPct">— of salary</div></div>
+                </div>
+                <div class="stat-card" style="--card-accent:var(--green)">
+                  <div class="stat-label">Remaining</div>
+                  <div class="stat-value" id="dRemain">₱0</div>
+                  <div class="stat-rank"><div class="rank-pip neutral" id="dRemainPip"></div><div class="rank-label" id="dRemainLabel">available</div></div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-label">Expenses Count</div>
+                  <div class="stat-value" id="dExpCount">0</div>
+                  <div class="rank-label">logged this period</div>
+                </div>
+              </div>
+              <div class="section-title">Recent Expenses</div>
+              <div id="dashRecentExp"></div>
+            </div>
+
+            <!-- Expenses -->
+            <div class="fin-page" id="fin-expenses">
+              <div class="page-hdr">
+                <div>
+                  <div class="page-hdr-title">Expenses</div>
+                  <div class="page-hdr-sub">LOG · TRACK · ANALYZE</div>
+                </div>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;">
+                <div>
+                  <div class="section-title">Log Expense</div>
+                  <div class="field-group">
+                    <label class="field-label">Description</label>
+                    <input class="field-input" id="expDesc" placeholder="e.g. Jollibee dinner" />
+                  </div>
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                    <div class="field-group">
+                      <label class="field-label">Amount (₱)</label>
+                      <input class="field-input" id="expAmt" type="number" placeholder="0.00" />
+                    </div>
+                    <div class="field-group">
+                      <label class="field-label">Category</label>
+                      <select class="field-input" id="expCat">
+                        <option value="food">Food</option>
+                        <option value="fare">Fare</option>
+                        <option value="laundry">Laundry</option>
+                        <option value="other">Other</option>
+                      </select>
+                    </div>
+                  </div>
+                  <button class="btn btn-gold" onclick="addExpense()">DEPLOY EXPENSE</button>
+                </div>
+                <div>
+                  <div class="section-title">Category Totals</div>
+                  <div id="expCatTotals"></div>
+                </div>
+              </div>
+              <div class="section-title">Expense Log</div>
+              <div id="expenseList"></div>
+            </div>
+
+            <!-- Budget -->
+            <div class="fin-page" id="fin-budget">
+              <div class="page-hdr">
+                <div>
+                  <div class="page-hdr-title">Budget</div>
+                  <div class="page-hdr-sub">ALLOCATION · UTILIZATION</div>
+                </div>
+              </div>
+              <div id="budgetBars"></div>
+            </div>
+
+            <!-- Goals / Savings -->
+            <div class="fin-page" id="fin-savings">
+              <div class="page-hdr">
+                <div>
+                  <div class="page-hdr-title">Goals</div>
+                  <div class="page-hdr-sub">SAVINGS OBJECTIVES</div>
+                </div>
+                <button class="btn btn-ghost" onclick="openGoalModal()">+ ADD GOAL</button>
+              </div>
+              <div id="goalsList"></div>
+            </div>
+
+            <!-- Income -->
+            <div class="fin-page" id="fin-income">
+              <div class="page-hdr">
+                <div><div class="page-hdr-title">Income</div><div class="page-hdr-sub">SALARY · PAYSLIP</div></div>
+              </div>
+              <div class="stat-grid">
+                <div class="stat-card">
+                  <div class="stat-label">Gross Salary</div>
+                  <div class="stat-value" id="incGross">₱0</div>
+                </div>
+                <div class="stat-card" style="--card-accent:var(--red)">
+                  <div class="stat-label">Deductions</div>
+                  <div class="stat-value negative" id="incDeduct">₱0</div>
+                </div>
+                <div class="stat-card" style="--card-accent:var(--green)">
+                  <div class="stat-label">Net Pay</div>
+                  <div class="stat-value positive" id="incNet">₱0</div>
+                </div>
+              </div>
+              <div class="section-title">Salary Config</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;max-width:400px;">
+                <div class="field-group">
+                  <label class="field-label">Monthly Salary (₱)</label>
+                  <input class="field-input" id="incSalInput" type="number" placeholder="0" oninput="saveIncomeSalary()" />
+                </div>
+                <div class="field-group">
+                  <label class="field-label">Mode</label>
+                  <select class="field-input" id="incModeInput" onchange="saveIncomeMode()">
+                    <option value="biweekly">Biweekly</option>
+                    <option value="monthly">Monthly</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Debt -->
+            <div class="fin-page" id="fin-debt">
+              <div class="page-hdr">
+                <div><div class="page-hdr-title">Debt</div><div class="page-hdr-sub">LIABILITIES TRACKER</div></div>
+                <button class="btn btn-ghost" onclick="openDebtModal()">+ ADD DEBT</button>
+              </div>
+              <div id="debtList"></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ── QUESTS SCREEN ── -->
+      <div class="module-screen" id="screen-quests">
+        <div class="quests-layout">
+          <nav class="quests-sub-nav">
+            <div class="sub-nav-section">Filter</div>
+            <div class="sub-nav-item active" data-qfilter="all"       onclick="qFilter('all')">      <span class="sni-icon">◈</span>All Quests</div>
+            <div class="sub-nav-item"        data-qfilter="active"    onclick="qFilter('active')">   <span class="sni-icon">⚔️</span>Active</div>
+            <div class="sub-nav-item"        data-qfilter="completed" onclick="qFilter('completed')"><span class="sni-icon">✓</span>Completed</div>
+            <div class="sub-nav-section">Priority</div>
+            <div class="sub-nav-item"        data-qfilter="high"      onclick="qFilter('high')">     <span class="sni-icon">▲</span>High</div>
+            <div class="sub-nav-item"        data-qfilter="medium"    onclick="qFilter('medium')">   <span class="sni-icon">◆</span>Medium</div>
+            <div class="sub-nav-item"        data-qfilter="low"       onclick="qFilter('low')">      <span class="sni-icon">▼</span>Low</div>
+          </nav>
+          <div class="quests-content">
+            <div class="page-hdr">
+              <div>
+                <div class="page-hdr-title">Quest Log</div>
+                <div class="page-hdr-sub" id="questSubline">0 ACTIVE OBJECTIVES</div>
+              </div>
+              <button class="btn btn-red" onclick="openQuestModal()">+ INSCRIBE QUEST</button>
+            </div>
+            <div id="questsList"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── HEALTH SCREEN ── -->
+      <div class="module-screen" id="screen-health">
+        <div class="health-layout">
+          <nav class="health-sub-nav">
+            <div class="sub-nav-section">Sections</div>
+            <div class="sub-nav-item active" data-hsec="overview" onclick="hNav('overview')"> <span class="sni-icon">▣</span>Overview</div>
+            <div class="sub-nav-item"        data-hsec="exercise" onclick="hNav('exercise')"> <span class="sni-icon">🏋️</span>Exercise</div>
+            <div class="sub-nav-item"        data-hsec="diet"     onclick="hNav('diet')">     <span class="sni-icon">🥗</span>Diet</div>
+            <div class="sub-nav-item"        data-hsec="sleep"    onclick="hNav('sleep')">    <span class="sni-icon">🌙</span>Sleep</div>
+            <div class="sub-nav-item"        data-hsec="water"    onclick="hNav('water')">    <span class="sni-icon">💧</span>Water</div>
+            <div class="sub-nav-item"        data-hsec="meds"     onclick="hNav('meds')">     <span class="sni-icon">💊</span>Meds</div>
+          </nav>
+          <div class="health-content">
+            <div class="page-hdr">
+              <div>
+                <div class="page-hdr-title" id="healthSecTitle">Overview</div>
+                <div class="page-hdr-sub">VITAE · BODY ENGINE</div>
+              </div>
+              <button class="btn" style="background:var(--green-dim);color:var(--green);border:1px solid var(--green);clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);font-family:var(--fd);font-size:.75rem;font-weight:700;letter-spacing:3px;padding:8px 20px;cursor:pointer;" id="healthLogBtn" onclick="hOpenLog()">+ LOG</button>
+            </div>
+            <!-- Overview -->
+            <div id="hsec-overview">
+              <div class="vital-grid" id="vitalGrid"></div>
+              <div class="section-title">Quick Actions</div>
+              <div class="quick-log-row">
+                <div class="quick-log-btn" onclick="hNav('exercise')">🏋️ Exercise</div>
+                <div class="quick-log-btn" onclick="hNav('diet')">🥗 Meal</div>
+                <div class="quick-log-btn" onclick="hNav('sleep')">🌙 Sleep</div>
+                <div class="quick-log-btn" onclick="hNav('water')">💧 Water</div>
+                <div class="quick-log-btn" onclick="hNav('meds')">💊 Meds</div>
+              </div>
+            </div>
+            <!-- Exercise -->
+            <div id="hsec-exercise" class="hidden">
+              <div class="section-title">Exercise Log</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;max-width:420px;">
+                <div class="field-group"><label class="field-label">Activity</label><input class="field-input" id="hExType" placeholder="Running, Lifting..."/></div>
+                <div class="field-group"><label class="field-label">Duration (min)</label><input class="field-input" id="hExDur" type="number" placeholder="30"/></div>
+              </div>
+              <button class="btn" style="background:var(--green-dim);color:var(--green);border:1px solid var(--green);clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);font-family:var(--fd);font-size:.75rem;font-weight:700;letter-spacing:3px;padding:8px 20px;cursor:pointer;" onclick="hLogExercise()">LOG WORKOUT</button>
+              <div class="section-title mt16">History</div>
+              <div id="hExList" class="log-list"></div>
+            </div>
+            <!-- Diet -->
+            <div id="hsec-diet" class="hidden">
+              <div class="section-title">Diet Log</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;max-width:420px;">
+                <div class="field-group"><label class="field-label">Food / Meal</label><input class="field-input" id="hDietFood" placeholder="Sinigang, rice..."/></div>
+                <div class="field-group"><label class="field-label">Calories (est.)</label><input class="field-input" id="hDietCal" type="number" placeholder="0"/></div>
+              </div>
+              <button class="btn" style="background:var(--green-dim);color:var(--green);border:1px solid var(--green);clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);font-family:var(--fd);font-size:.75rem;font-weight:700;letter-spacing:3px;padding:8px 20px;cursor:pointer;" onclick="hLogDiet()">LOG MEAL</button>
+              <div class="section-title mt16">History</div>
+              <div id="hDietList" class="log-list"></div>
+            </div>
+            <!-- Sleep -->
+            <div id="hsec-sleep" class="hidden">
+              <div class="section-title">Sleep Log</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;max-width:420px;">
+                <div class="field-group"><label class="field-label">Hours Slept</label><input class="field-input" id="hSleepHrs" type="number" step="0.5" placeholder="8"/></div>
+                <div class="field-group"><label class="field-label">Quality</label>
+                  <select class="field-input" id="hSleepQ">
+                    <option value="poor">Poor</option><option value="fair">Fair</option><option value="good" selected>Good</option><option value="great">Great</option>
+                  </select>
+                </div>
+              </div>
+              <button class="btn" style="background:var(--green-dim);color:var(--green);border:1px solid var(--green);clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);font-family:var(--fd);font-size:.75rem;font-weight:700;letter-spacing:3px;padding:8px 20px;cursor:pointer;" onclick="hLogSleep()">LOG SLEEP</button>
+              <div class="section-title mt16">History</div>
+              <div id="hSleepList" class="log-list"></div>
+            </div>
+            <!-- Water -->
+            <div id="hsec-water" class="hidden">
+              <div class="section-title">Water Intake</div>
+              <div style="max-width:280px;margin-bottom:16px;">
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+                  <div style="font-family:var(--fd);font-size:3rem;font-weight:900;color:var(--teal);" id="hWaterTotal">0</div>
+                  <div class="text-muted">ml today</div>
+                </div>
+                <div style="display:flex;gap:8px;">
+                  <input class="field-input" style="flex:1;" id="hWaterMl" type="number" placeholder="250" />
+                  <button class="btn" style="background:var(--teal-dim);color:var(--teal);border:1px solid var(--teal);clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);font-family:var(--fd);font-size:.7rem;font-weight:700;letter-spacing:2px;padding:8px 14px;cursor:pointer;" onclick="hLogWater()">+ADD</button>
+                </div>
+              </div>
+            </div>
+            <!-- Meds -->
+            <div id="hsec-meds" class="hidden">
+              <div class="section-title">Medications</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;max-width:420px;">
+                <div class="field-group"><label class="field-label">Medicine Name</label><input class="field-input" id="hMedName" placeholder="Paracetamol..."/></div>
+                <div class="field-group"><label class="field-label">Dose</label><input class="field-input" id="hMedDose" placeholder="500mg"/></div>
+              </div>
+              <button class="btn" style="background:var(--green-dim);color:var(--green);border:1px solid var(--green);clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);font-family:var(--fd);font-size:.75rem;font-weight:700;letter-spacing:3px;padding:8px 20px;cursor:pointer;" onclick="hLogMed()">LOG MED</button>
+              <div class="section-title mt16">Active Meds</div>
+              <div id="hMedList" class="log-list"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── INVENTORY SCREEN ── -->
+      <div class="module-screen" id="screen-inventory">
+        <div class="inventory-layout">
+          <nav class="inventory-sub-nav">
+            <div class="sub-nav-section">View</div>
+            <div class="sub-nav-item active" data-icat="all"        onclick="iFilter('all')">       <span class="sni-icon">◈</span>All Items</div>
+            <div class="sub-nav-item"        data-icat="wardrobe"   onclick="iFilter('wardrobe')">  <span class="sni-icon">👕</span>Wardrobe</div>
+            <div class="sub-nav-item"        data-icat="consumable" onclick="iFilter('consumable')"><span class="sni-icon">🧴</span>Consumables</div>
+            <div class="sub-nav-item"        data-icat="book"       onclick="iFilter('book')">      <span class="sni-icon">📖</span>Books</div>
+            <div class="sub-nav-item"        data-icat="equipment"  onclick="iFilter('equipment')"> <span class="sni-icon">🔧</span>Equipment</div>
+            <div class="sub-nav-item"        data-icat="other"      onclick="iFilter('other')">     <span class="sni-icon">📦</span>Other</div>
+          </nav>
+          <div class="inventory-content">
+            <div class="page-hdr">
+              <div>
+                <div class="page-hdr-title">Inventory</div>
+                <div class="page-hdr-sub" id="invSubline">0 ITEMS</div>
+              </div>
+              <button class="btn" style="background:var(--blue-dim);color:var(--blue);border:1px solid var(--blue);clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);font-family:var(--fd);font-size:.75rem;font-weight:700;letter-spacing:3px;padding:8px 20px;cursor:pointer;" onclick="openInvModal()">+ ADD ITEM</button>
+            </div>
+            <div class="inv-grid" id="invGrid"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── CHRONOS SCREEN ── -->
+      <div class="module-screen" id="screen-chronos">
+        <div class="chronos-layout">
+          <nav class="chronos-sub-nav">
+            <div class="sub-nav-section">View</div>
+            <div class="sub-nav-item active" data-cv="calendar" onclick="chView('calendar')"><span class="sni-icon">▣</span>Month</div>
+            <div class="sub-nav-item"        data-cv="agenda"   onclick="chView('agenda')">  <span class="sni-icon">≡</span>Agenda</div>
+            <div class="sub-nav-section">Filter</div>
+            <div class="sub-nav-item active" data-cf="all"      onclick="chFilter('all')">     <span class="sni-icon">◈</span>All</div>
+            <div class="sub-nav-item"        data-cf="work"     onclick="chFilter('work')">    <span class="sni-icon">💼</span>Work</div>
+            <div class="sub-nav-item"        data-cf="personal" onclick="chFilter('personal')"><span class="sni-icon">🏠</span>Personal</div>
+            <div class="sub-nav-item"        data-cf="study"    onclick="chFilter('study')">   <span class="sni-icon">📚</span>Study</div>
+          </nav>
+          <div class="chronos-content">
+            <div class="page-hdr">
+              <div>
+                <div class="page-hdr-title" id="calMonthTitle">Month</div>
+                <div class="page-hdr-sub">CHRONOS · TIME ENGINE</div>
+              </div>
+              <div style="display:flex;gap:6px;">
+                <button class="btn btn-ghost" onclick="chPrev()">‹ PREV</button>
+                <button class="btn btn-ghost" onclick="chToday()">TODAY</button>
+                <button class="btn btn-ghost" onclick="chNext()">NEXT ›</button>
+              </div>
+            </div>
+            <div id="chCalView"></div>
+            <div id="chAgendaView" class="hidden"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── SETTINGS SCREEN ── -->
+      <div class="module-screen" id="screen-settings">
+        <div class="fin-content">
+          <div class="page-hdr">
+            <div><div class="page-hdr-title">Settings</div><div class="page-hdr-sub">SYSTEM CONFIG</div></div>
+          </div>
+          <div class="section-title">Profile</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;max-width:500px;">
+            <div class="field-group">
+              <label class="field-label">Agent Name</label>
+              <input class="field-input" id="setAgentName" placeholder="ELMO" oninput="saveAgentName()" />
+            </div>
+          </div>
+          <div class="section-title mt24">Data</div>
+          <div class="row" style="gap:8px;flex-wrap:wrap;">
+            <button class="btn btn-ghost" onclick="exportData()">EXPORT DATA</button>
+            <button class="btn btn-red"   onclick="clearAllData()">WIPE DATA</button>
+          </div>
+          <div class="section-title mt24">About</div>
+          <div class="text-muted">ZENITH OS v39 · RIOT EDITION · PH NIGHT SHIFT</div>
+        </div>
+      </div>
+
+    </div><!-- /main-area -->
+  </div><!-- /body-area -->
+</div><!-- /app-shell -->
+
+<!-- ── QUEST MODAL ── -->
+<div class="modal-overlay" id="questModal">
+  <div class="modal-box" style="--modal-accent:var(--red);--modal-glow:var(--red-glow);">
+    <div class="modal-hdr">
+      <div class="modal-title" id="questModalTitle">INSCRIBE QUEST</div>
+      <button class="modal-close" onclick="closeQuestModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="field-group"><label class="field-label">Quest Title</label><input class="field-input" id="qTitle" placeholder="Conquer the bar exam..."/></div>
+      <div class="field-group"><label class="field-label">Description</label><textarea class="field-input" id="qDesc" rows="3" placeholder="What must be done..." style="resize:vertical;"></textarea></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div class="field-group">
+          <label class="field-label">Priority</label>
+          <select class="field-input" id="qPriority">
+            <option value="high">High</option>
+            <option value="medium" selected>Medium</option>
+            <option value="low">Low</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Category</label>
+          <select class="field-input" id="qCategory">
+            <option value="career">Career</option>
+            <option value="personal">Personal</option>
+            <option value="finance">Finance</option>
+            <option value="health">Health</option>
+            <option value="study">Study</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-group"><label class="field-label">XP Reward</label><input class="field-input" id="qXP" type="number" placeholder="100" value="100"/></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" style="background:var(--bg3);color:var(--muted2);border:1px solid var(--line2);clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);font-family:var(--fd);font-size:.7rem;font-weight:700;letter-spacing:2px;padding:7px 16px;cursor:pointer;" onclick="closeQuestModal()">CANCEL</button>
+      <button class="btn btn-red" onclick="saveQuest()">INSCRIBE</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── GOAL MODAL ── -->
+<div class="modal-overlay" id="goalModal">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <div class="modal-title">ADD GOAL</div>
+      <button class="modal-close" onclick="closeGoalModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="field-group"><label class="field-label">Goal Name</label><input class="field-input" id="goalName" placeholder="Emergency fund..."/></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div class="field-group"><label class="field-label">Target (₱)</label><input class="field-input" id="goalTarget" type="number" placeholder="50000"/></div>
+        <div class="field-group"><label class="field-label">Saved So Far (₱)</label><input class="field-input" id="goalCurrent" type="number" placeholder="0"/></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" style="background:var(--bg3);color:var(--muted2);border:1px solid var(--line2);clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);font-family:var(--fd);font-size:.7rem;font-weight:700;letter-spacing:2px;padding:7px 16px;cursor:pointer;" onclick="closeGoalModal()">CANCEL</button>
+      <button class="btn btn-gold" onclick="saveGoal()">SAVE GOAL</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── DEBT MODAL ── -->
+<div class="modal-overlay" id="debtModal">
+  <div class="modal-box" style="--modal-accent:var(--red);--modal-glow:var(--red-glow);">
+    <div class="modal-hdr">
+      <div class="modal-title">ADD DEBT</div>
+      <button class="modal-close" onclick="closeDebtModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="field-group"><label class="field-label">Creditor / Label</label><input class="field-input" id="debtName" placeholder="SSS Loan, Credit Card..."/></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div class="field-group"><label class="field-label">Total Amount (₱)</label><input class="field-input" id="debtTotal" type="number" placeholder="10000"/></div>
+        <div class="field-group"><label class="field-label">Remaining (₱)</label><input class="field-input" id="debtRemain" type="number" placeholder="10000"/></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" style="background:var(--bg3);color:var(--muted2);border:1px solid var(--line2);clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);font-family:var(--fd);font-size:.7rem;font-weight:700;letter-spacing:2px;padding:7px 16px;cursor:pointer;" onclick="closeDebtModal()">CANCEL</button>
+      <button class="btn btn-red" onclick="saveDebt()">ADD DEBT</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── INV MODAL ── -->
+<div class="modal-overlay" id="invModal">
+  <div class="modal-box" style="--modal-accent:var(--blue);--modal-glow:rgba(79,200,255,.35);">
+    <div class="modal-hdr">
+      <div class="modal-title">ADD ITEM</div>
+      <button class="modal-close" onclick="closeInvModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="field-group"><label class="field-label">Item Name</label><input class="field-input" id="invName" placeholder="Name..."/></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div class="field-group"><label class="field-label">Category</label>
+          <select class="field-input" id="invCat">
+            <option value="wardrobe">Wardrobe</option>
+            <option value="consumable">Consumable</option>
+            <option value="book">Book</option>
+            <option value="equipment">Equipment</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="field-group"><label class="field-label">Qty</label><input class="field-input" id="invQty" type="number" value="1" min="1"/></div>
+      </div>
+      <div class="field-group"><label class="field-label">Notes</label><input class="field-input" id="invNotes" placeholder="Optional notes..."/></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" style="background:var(--bg3);color:var(--muted2);border:1px solid var(--line2);clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);font-family:var(--fd);font-size:.7rem;font-weight:700;letter-spacing:2px;padding:7px 16px;cursor:pointer;" onclick="closeInvModal()">CANCEL</button>
+      <button class="btn" style="background:var(--blue-dim);color:var(--blue);border:1px solid var(--blue);clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);font-family:var(--fd);font-size:.75rem;font-weight:700;letter-spacing:3px;padding:8px 20px;cursor:pointer;" onclick="saveInvItem()">ADD ITEM</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── CONFIRM DIALOG ── -->
+<div id="riotConfirmModal">
+  <div class="modal-box" style="--modal-accent:var(--red);--modal-glow:var(--red-glow);max-width:380px;">
+    <div class="modal-hdr">
+      <div class="modal-title">CONFIRM</div>
+    </div>
+    <div class="modal-body">
+      <div style="font-family:var(--fb);font-size:.88rem;color:var(--text);line-height:1.6;" id="riotConfirmMsg"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" style="background:var(--bg3);color:var(--muted2);border:1px solid var(--line2);clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);font-family:var(--fd);font-size:.7rem;font-weight:700;letter-spacing:2px;padding:7px 16px;cursor:pointer;" id="riotConfirmCancel">CANCEL</button>
+      <button class="btn btn-red" id="riotConfirmOk">CONFIRM</button>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+/* ═══════════════════════════════════════════════
+   ZENITH RIOT — DATA LAYER
+   Reads from same localStorage keys as Zenith v39
+   so existing data carries over
+═══════════════════════════════════════════════ */
+
+const LS = {
+  get: (k, def=null) => { try { const v=localStorage.getItem(k); return v?JSON.parse(v):def; } catch{ return def; } },
+  set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch{} },
+};
+
+/* ── Finance ── */
+const FIN_KEY = localStorage.getItem('LDG_PROFILE') || 'LDG_S';
+let FIN = {};
+function finLoad() {
+  FIN = LS.get(FIN_KEY) || { activePeriod:1, salaryMode:'biweekly', monthlySalary:0, periods:{} };
+  if (!FIN.periods) FIN.periods = {};
+  [1,2].forEach(p => {
+    if (!FIN.periods[p]) FIN.periods[p] = { salary:0, label:p===1?'1st Half':'2nd Half', expenses:[], recurring:[], goals:[], debts:[] };
+    if (!FIN.periods[p].goals)  FIN.periods[p].goals  = [];
+    if (!FIN.periods[p].debts)  FIN.periods[p].debts  = [];
+  });
+}
+function finSave() { LS.set(FIN_KEY, FIN); }
+function finPeriod() { return FIN.periods[FIN.activePeriod || 1]; }
+
+/* ── Quests ── */
+const QST_KEY = 'zenith_quests_riot';
+let QUESTS = [];
+function qLoad() { QUESTS = LS.get(QST_KEY, []); }
+function qSave()  { LS.set(QST_KEY, QUESTS); }
+
+/* ── Health ── */
+const HLT_KEY = 'zenith_health_v1';
+let HLT = {};
+function hLoad() {
+  HLT = LS.get(HLT_KEY, { exercise:[], diet:[], sleep:[], water:{today:0}, meds:[] });
+  if (!HLT.exercise) HLT.exercise = [];
+  if (!HLT.diet)     HLT.diet = [];
+  if (!HLT.sleep)    HLT.sleep = [];
+  if (!HLT.water)    HLT.water = {today:0};
+  if (!HLT.meds)     HLT.meds = [];
+}
+function hSave() { LS.set(HLT_KEY, HLT); }
+
+/* ── Inventory ── */
+const INV_KEY = 'zenith_inventory_v1';
+let INV = [];
+function iLoad() { INV = LS.get(INV_KEY, []); if (!Array.isArray(INV)) INV = []; }
+function iSave() { LS.set(INV_KEY, INV); }
+
+/* ── Chronos ── */
+const CAL_KEY = 'chronos_v1';
+let CAL_EVENTS = [];
+function calLoad() { const d = LS.get(CAL_KEY, {}); CAL_EVENTS = d.events || []; }
+
+/* ── Settings ── */
+const SET_KEY = 'zenith_riot_settings';
+let SETTINGS = { agentName: 'ELMO' };
+function sLoad() { SETTINGS = LS.get(SET_KEY, { agentName: 'ELMO' }); }
+function sSave() { LS.set(SET_KEY, SETTINGS); }
+
+/* ═══════════════════════════════════════════════
+   GREETING
+═══════════════════════════════════════════════ */
+function getGreeting() {
+  const h = new Date().getHours();
+  const n = SETTINGS.agentName || 'ELMO';
+  if (h >= 5  && h < 12) return `GOOD MORNING, AGENT ${n}`;
+  if (h >= 12 && h < 18) return `GOOD AFTERNOON, AGENT ${n}`;
+  if (h >= 18 && h < 22) return `GOOD EVENING, AGENT ${n}`;
+  return `BURNING THE MIDNIGHT OIL, ${n}`;
+}
+
+/* ═══════════════════════════════════════════════
+   LOADOUT SCREEN
+═══════════════════════════════════════════════ */
+let _launched = false;
+function launchModule(mod) {
+  if (_launched) { switchModule(mod); return; }
+  _launched = true;
+  const ls = document.getElementById('screen-loadout');
+  ls.classList.add('dismissed');
+  setTimeout(() => {
+    ls.style.display = 'none';
+    document.getElementById('appShell').style.display = 'flex';
+    switchModule(mod);
+  }, 250);
+}
+
+function backToLoadout() {
+  _launched = false;
+  document.getElementById('appShell').style.display = 'none';
+  const ls = document.getElementById('screen-loadout');
+  ls.style.display = 'flex';
+  ls.classList.remove('dismissed');
+  ls.style.animation = 'screenIn .2s cubic-bezier(0.16,1,0.3,1) both';
+  document.getElementById('topbarBack').classList.remove('visible');
+}
+
+/* ═══════════════════════════════════════════════
+   MODULE SWITCHING
+═══════════════════════════════════════════════ */
+let _currentMod = '';
+const MOD_LABELS = {
+  finance:'FINANCE // LEDGER', chronos:'CHRONOS // TIME ENGINE',
+  health:'HEALTH // VITAE', quests:'QUESTS // OBJECTIVES',
+  inventory:'INVENTORY', settings:'SETTINGS'
+};
+
+function switchModule(mod) {
+  _currentMod = mod;
+  // Screens
+  document.querySelectorAll('.module-screen').forEach(s => s.classList.remove('active'));
+  const sc = document.getElementById('screen-' + mod);
+  if (sc) sc.classList.add('active');
+  // Rail
+  document.querySelectorAll('.rail-item').forEach(r => r.classList.remove('active'));
+  const ri = document.querySelector(`.rail-item[data-module="${mod}"]`);
+  if (ri) ri.classList.add('active');
+  // Topbar
+  document.getElementById('topbarModule').textContent = MOD_LABELS[mod] || mod.toUpperCase();
+  document.getElementById('topbarBack').classList.add('visible');
+  // Render
+  if (mod === 'finance')   { finLoad(); renderFinDashboard(); }
+  if (mod === 'quests')    { qLoad(); renderQuests(); }
+  if (mod === 'health')    { hLoad(); renderHealth(); }
+  if (mod === 'inventory') { iLoad(); renderInventory(); }
+  if (mod === 'chronos')   { calLoad(); renderCal(); }
+  if (mod === 'settings')  { sLoad(); renderSettings(); }
+}
+
+/* ═══════════════════════════════════════════════
+   FINANCE
+═══════════════════════════════════════════════ */
+let _finPage = 'dashboard';
+function finNav(page) {
+  _finPage = page;
+  document.querySelectorAll('.fin-page').forEach(p => p.classList.remove('active'));
+  document.getElementById('fin-' + page)?.classList.add('active');
+  document.querySelectorAll('[data-fin]').forEach(i => i.classList.remove('active'));
+  document.querySelector(`[data-fin="${page}"]`)?.classList.add('active');
+  if (page === 'dashboard') renderFinDashboard();
+  if (page === 'expenses')  renderExpenses();
+  if (page === 'budget')    renderBudget();
+  if (page === 'savings')   renderGoals();
+  if (page === 'income')    renderIncome();
+  if (page === 'debt')      renderDebts();
+}
+
+const fmt = n => '₱' + (Number(n)||0).toLocaleString('en-PH', {minimumFractionDigits:2, maximumFractionDigits:2});
+
+function renderFinDashboard() {
+  const p = finPeriod();
+  if (!p) return;
+  const exps = p.expenses || [];
+  const salary = p.salary || 0;
+  const spent = exps.reduce((s,e)=>s+(Number(e.amount)||0), 0);
+  const remain = salary - spent;
+  const pct = salary > 0 ? Math.round(spent/salary*100) : 0;
+  document.getElementById('finPeriodLabel').textContent = `PERIOD ${FIN.activePeriod} · ${p.label||''}`;
+  document.getElementById('dSalary').textContent = fmt(salary);
+  document.getElementById('dSpent').textContent  = fmt(spent);
+  document.getElementById('dSpentPct').textContent = pct + '% of salary';
+  const remEl = document.getElementById('dRemain');
+  remEl.textContent = fmt(remain);
+  remEl.className = 'stat-value ' + (remain >= 0 ? 'positive' : 'negative');
+  const pip = document.getElementById('dRemainPip');
+  pip.className = 'rank-pip ' + (remain >= 0 ? 'up' : 'down');
+  document.getElementById('dRemainLabel').textContent = remain >= 0 ? 'available' : 'over budget';
+  document.getElementById('dExpCount').textContent = exps.length;
+  // Recent
+  const recent = [...exps].reverse().slice(0,5);
+  document.getElementById('dashRecentExp').innerHTML = recent.length ? recent.map(e => expRowHTML(e)).join('') :
+    `<div class="text-muted" style="padding:20px 0;">No expenses logged this period.</div>`;
+}
+
+const CAT_COLORS = { food:'var(--gold)', fare:'var(--teal)', laundry:'var(--blue)', other:'var(--muted)' };
+function expRowHTML(e) {
+  const col = CAT_COLORS[e.category||'other'] || 'var(--muted)';
+  return `<div class="expense-row" style="--cat-color:${col};">
+    <div>
+      <div class="expense-desc">${e.desc||e.description||'—'}</div>
+      <div class="expense-cat">${e.category||'other'} · ${e.date||'—'}</div>
+    </div>
+    <div class="expense-amt">${fmt(e.amount)}</div>
+    <button class="expense-del" onclick="delExpense('${e.id}')">✕</button>
+  </div>`;
+}
+
+function addExpense() {
+  const desc = document.getElementById('expDesc').value.trim();
+  const amt  = parseFloat(document.getElementById('expAmt').value) || 0;
+  const cat  = document.getElementById('expCat').value;
+  if (!desc) { riotAlert('Enter a description.'); return; }
+  if (!amt)  { riotAlert('Enter an amount.'); return; }
+  finLoad();
+  const p = finPeriod();
+  p.expenses = p.expenses || [];
+  p.expenses.push({ id:'e'+Date.now(), desc, amount:amt, category:cat, date:new Date().toLocaleDateString('en-PH') });
+  finSave();
+  document.getElementById('expDesc').value = '';
+  document.getElementById('expAmt').value  = '';
+  renderExpenses();
+}
+
+function delExpense(id) {
+  riotConfirm('Remove this expense?', () => {
+    finLoad();
+    const p = finPeriod();
+    p.expenses = (p.expenses||[]).filter(e=>e.id!==id);
+    finSave();
+    renderExpenses();
+  });
+}
+
+function renderExpenses() {
+  const p = finPeriod();
+  const exps = p?.expenses || [];
+  document.getElementById('expenseList').innerHTML = exps.length
+    ? [...exps].reverse().map(e=>expRowHTML(e)).join('')
+    : `<div class="text-muted" style="padding:20px 0;">No expenses yet.</div>`;
+  // Cat totals
+  const cats = ['food','fare','laundry','other'];
+  document.getElementById('expCatTotals').innerHTML = cats.map(c=>{
+    const tot = exps.filter(e=>e.category===c).reduce((s,e)=>s+(Number(e.amount)||0),0);
+    const col = CAT_COLORS[c];
+    return `<div class="expense-row" style="--cat-color:${col};margin-bottom:2px;cursor:default;">
+      <div class="expense-cat" style="flex:1;color:var(--muted2);">${c.toUpperCase()}</div>
+      <div class="expense-amt">${fmt(tot)}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderBudget() {
+  const p = finPeriod();
+  const salary = p?.salary || 0;
+  const exps = p?.expenses || [];
+  const cats = ['food','fare','laundry','other'];
+  document.getElementById('budgetBars').innerHTML = cats.map(c => {
+    const spent = exps.filter(e=>e.category===c).reduce((s,e)=>s+(Number(e.amount)||0),0);
+    const pct = salary > 0 ? Math.min((spent/salary)*100, 100) : 0;
+    const over = salary > 0 && spent > salary * 0.4;
+    return `<div class="budget-row">
+      <div class="budget-row-hdr">
+        <div class="budget-row-label">${c}</div>
+        <div class="budget-row-vals">${fmt(spent)}</div>
+      </div>
+      <div class="budget-track"><div class="budget-fill${over?' over':''}" style="width:${pct}%"></div></div>
+    </div>`;
+  }).join('');
+}
+
+function renderGoals() {
+  const p = finPeriod();
+  const goals = p?.goals || [];
+  document.getElementById('goalsList').innerHTML = goals.length
+    ? goals.map(g => {
+        const pct = g.target > 0 ? Math.min(Math.round((g.current/g.target)*100),100) : 0;
+        const done = pct >= 100;
+        return `<div class="goal-card${done?' done':''}">
+          <div style="flex:1;">
+            <div class="goal-name">${g.name}</div>
+            <div class="goal-progress">${pct}% COMPLETE · ${fmt(g.current)} / ${fmt(g.target)}</div>
+            <div class="budget-track mt8" style="width:100%;"><div class="budget-fill${done?' ':''}" style="width:${pct}%;${done?'background:var(--green);':''}""></div></div>
+          </div>
+          <div style="text-align:right;">
+            <div class="goal-amt">${fmt(g.target)}</div>
+            <button class="expense-del" onclick="delGoal('${g.id}')">✕</button>
+          </div>
+        </div>`;
+      }).join('')
+    : `<div class="text-muted" style="padding:20px 0;">No goals set.</div>`;
+}
+
+function openGoalModal()  { document.getElementById('goalModal').classList.add('open'); }
+function closeGoalModal() { document.getElementById('goalModal').classList.remove('open'); }
+function saveGoal() {
+  const name = document.getElementById('goalName').value.trim();
+  const target = parseFloat(document.getElementById('goalTarget').value) || 0;
+  const current = parseFloat(document.getElementById('goalCurrent').value) || 0;
+  if (!name) { riotAlert('Enter a goal name.'); return; }
+  finLoad();
+  const p = finPeriod();
+  p.goals = p.goals || [];
+  p.goals.push({ id:'g'+Date.now(), name, target, current });
+  finSave();
+  closeGoalModal();
+  renderGoals();
+  document.getElementById('goalName').value = '';
+  document.getElementById('goalTarget').value = '';
+  document.getElementById('goalCurrent').value = '';
+}
+function delGoal(id) {
+  riotConfirm('Remove this goal?', () => {
+    finLoad();
+    const p = finPeriod();
+    p.goals = (p.goals||[]).filter(g=>g.id!==id);
+    finSave();
+    renderGoals();
+  });
+}
+
+function renderIncome() {
+  const p = finPeriod();
+  const gross = p?.salary || 0;
+  const sss = Math.round(gross * 0.045);
+  const pagibig = 100;
+  const philhealth = Math.round(gross * 0.02);
+  const deduct = sss + pagibig + philhealth;
+  const net = gross - deduct;
+  document.getElementById('incGross').textContent = fmt(gross);
+  document.getElementById('incDeduct').textContent = fmt(deduct);
+  document.getElementById('incNet').textContent = fmt(net);
+  document.getElementById('incSalInput').value = FIN.monthlySalary || 0;
+  document.getElementById('incModeInput').value = FIN.salaryMode || 'biweekly';
+}
+function saveIncomeSalary() {
+  finLoad();
+  const v = parseFloat(document.getElementById('incSalInput').value) || 0;
+  FIN.monthlySalary = v;
+  // set period salary based on mode
+  const mode = FIN.salaryMode || 'biweekly';
+  const perPeriod = mode === 'biweekly' ? v/2 : v;
+  [1,2].forEach(p => { if(FIN.periods[p]) FIN.periods[p].salary = perPeriod; });
+  finSave();
+  renderIncome();
+  renderFinDashboard();
+}
+function saveIncomeMode() {
+  finLoad();
+  FIN.salaryMode = document.getElementById('incModeInput').value;
+  finSave();
+  saveIncomeSalary();
+}
+
+function renderDebts() {
+  const p = finPeriod();
+  const debts = p?.debts || [];
+  document.getElementById('debtList').innerHTML = debts.length
+    ? debts.map(d => {
+        const pct = d.total > 0 ? Math.min(Math.round(((d.total-d.remain)/d.total)*100),100) : 0;
+        return `<div class="goal-card" style="border-left:3px solid var(--red);">
+          <div style="flex:1;">
+            <div class="goal-name">${d.name}</div>
+            <div class="goal-progress">${pct}% PAID · ${fmt(d.remain)} remaining</div>
+            <div class="budget-track mt8"><div class="budget-fill over" style="width:${100-pct}%;"></div></div>
+          </div>
+          <div style="text-align:right;">
+            <div class="goal-amt" style="color:var(--red);">${fmt(d.total)}</div>
+            <button class="expense-del" onclick="delDebt('${d.id}')">✕</button>
+          </div>
+        </div>`;
+      }).join('')
+    : `<div class="text-muted" style="padding:20px 0;">No debts tracked.</div>`;
+}
+
+function openDebtModal()  { document.getElementById('debtModal').classList.add('open'); }
+function closeDebtModal() { document.getElementById('debtModal').classList.remove('open'); }
+function saveDebt() {
+  const name = document.getElementById('debtName').value.trim();
+  const total = parseFloat(document.getElementById('debtTotal').value) || 0;
+  const remain = parseFloat(document.getElementById('debtRemain').value) || total;
+  if (!name) { riotAlert('Enter a creditor name.'); return; }
+  finLoad();
+  const p = finPeriod();
+  p.debts = p.debts || [];
+  p.debts.push({ id:'d'+Date.now(), name, total, remain });
+  finSave();
+  closeDebtModal();
+  renderDebts();
+}
+function delDebt(id) {
+  riotConfirm('Remove this debt?', () => {
+    finLoad();
+    const p = finPeriod();
+    p.debts = (p.debts||[]).filter(d=>d.id!==id);
+    finSave();
+    renderDebts();
+  });
+}
+
+/* ═══════════════════════════════════════════════
+   QUESTS
+═══════════════════════════════════════════════ */
+let _qFilter = 'all';
+let _qEditId = null;
+
+function qFilter(f) {
+  _qFilter = f;
+  document.querySelectorAll('[data-qfilter]').forEach(i => i.classList.remove('active'));
+  document.querySelector(`[data-qfilter="${f}"]`)?.classList.add('active');
+  renderQuests();
+}
+
+const PRIORITY_COLORS = { high:'var(--red)', medium:'var(--gold)', low:'var(--muted)' };
+
+function renderQuests() {
+  let qs = [...QUESTS];
+  if (_qFilter === 'active')    qs = qs.filter(q=>!q.completed);
+  if (_qFilter === 'completed') qs = qs.filter(q=>q.completed);
+  if (_qFilter === 'high')      qs = qs.filter(q=>q.priority==='high');
+  if (_qFilter === 'medium')    qs = qs.filter(q=>q.priority==='medium');
+  if (_qFilter === 'low')       qs = qs.filter(q=>q.priority==='low');
+
+  const active = QUESTS.filter(q=>!q.completed).length;
+  document.getElementById('questSubline').textContent = `${active} ACTIVE OBJECTIVE${active!==1?'S':''}`;
+
+  if (!qs.length) {
+    document.getElementById('questsList').innerHTML = `<div class="quest-empty">
+      <div class="quest-empty-icon">⚔️</div>
+      <div class="quest-empty-text">No quests found</div>
+      <div class="text-muted">Inscribe your first objective</div>
+    </div>`;
+    return;
+  }
+
+  document.getElementById('questsList').innerHTML = qs.map(q => {
+    const col = PRIORITY_COLORS[q.priority] || 'var(--red)';
+    return `<div class="quest-card" style="--quest-color:${col};">
+      <div class="quest-card-body">
+        <div class="quest-info">
+          <div class="quest-title">${q.title}</div>
+          ${q.desc ? `<div class="quest-desc">${q.desc}</div>` : ''}
+          <div class="quest-tags">
+            <span class="quest-tag priority-${q.priority||'medium'}">${(q.priority||'medium').toUpperCase()}</span>
+            ${q.category ? `<span class="quest-tag">${q.category.toUpperCase()}</span>` : ''}
+            ${q.completed ? `<span class="quest-tag" style="color:var(--green);border-color:var(--green);background:var(--green-dim);">COMPLETED</span>` : ''}
+          </div>
+        </div>
+        <div class="quest-meta">
+          <div class="quest-xp">${q.xp||100} XP</div>
+          <button class="quest-del" onclick="toggleQuestComplete('${q.id}')">${q.completed?'↩':'✓'}</button>
+          <button class="quest-del" onclick="deleteQuest('${q.id}')">✕</button>
+        </div>
+      </div>
+      <div class="quest-progress-bar"><div class="quest-progress-fill" style="width:${q.completed?100:0}%;${q.completed?'background:var(--green);':''}"</div></div>
+    </div>`;
+  }).join('');
+}
+
+function openQuestModal(id=null) {
+  _qEditId = id;
+  const q = id ? QUESTS.find(x=>x.id===id) : null;
+  document.getElementById('questModalTitle').textContent = id ? 'EDIT QUEST' : 'INSCRIBE QUEST';
+  document.getElementById('qTitle').value    = q?.title    || '';
+  document.getElementById('qDesc').value     = q?.desc     || '';
+  document.getElementById('qPriority').value = q?.priority || 'medium';
+  document.getElementById('qCategory').value = q?.category || 'personal';
+  document.getElementById('qXP').value       = q?.xp       || 100;
+  document.getElementById('questModal').classList.add('open');
+}
+function closeQuestModal() { document.getElementById('questModal').classList.remove('open'); }
+
+function saveQuest() {
+  const title = document.getElementById('qTitle').value.trim();
+  if (!title) { riotAlert('Enter a quest title.'); return; }
+  const q = {
+    id:         _qEditId || 'q'+Date.now(),
+    title,
+    desc:       document.getElementById('qDesc').value.trim(),
+    priority:   document.getElementById('qPriority').value,
+    category:   document.getElementById('qCategory').value,
+    xp:         parseInt(document.getElementById('qXP').value) || 100,
+    completed:  _qEditId ? (QUESTS.find(x=>x.id===_qEditId)?.completed || false) : false,
+    created:    _qEditId ? (QUESTS.find(x=>x.id===_qEditId)?.created || Date.now()) : Date.now(),
+  };
+  if (_qEditId) { QUESTS = QUESTS.map(x=>x.id===_qEditId?q:x); }
+  else           { QUESTS.push(q); }
+  qSave();
+  closeQuestModal();
+  renderQuests();
+}
+
+function toggleQuestComplete(id) {
+  const q = QUESTS.find(x=>x.id===id);
+  if (q) { q.completed = !q.completed; qSave(); renderQuests(); }
+}
+
+function deleteQuest(id) {
+  riotConfirm('Abandon this quest?', () => {
+    QUESTS = QUESTS.filter(q=>q.id!==id);
+    qSave();
+    renderQuests();
+  });
+}
+
+/* ═══════════════════════════════════════════════
+   HEALTH
+═══════════════════════════════════════════════ */
+let _hSec = 'overview';
+function hNav(sec) {
+  _hSec = sec;
+  document.querySelectorAll('[data-hsec]').forEach(i=>i.classList.remove('active'));
+  document.querySelector(`[data-hsec="${sec}"]`)?.classList.add('active');
+  ['overview','exercise','diet','sleep','water','meds'].forEach(s=>{
+    const el=document.getElementById('hsec-'+s);
+    if(el) el.className = s===sec ? '' : 'hidden';
+  });
+  const titles = {overview:'Overview',exercise:'Exercise',diet:'Diet',sleep:'Sleep',water:'Water',meds:'Meds'};
+  document.getElementById('healthSecTitle').textContent = titles[sec]||sec;
+  renderHealthSec(sec);
+}
+function hOpenLog() { hNav(_hSec); }
+
+function renderHealth() { renderHealthSec(_hSec); renderVitals(); }
+
+function renderVitals() {
+  const exToday = HLT.exercise.filter(e=>e.date===today()).reduce((s,e)=>s+(e.duration||0),0);
+  const calToday = HLT.diet.filter(e=>e.date===today()).reduce((s,e)=>s+(e.cal||0),0);
+  const lastSleep = [...HLT.sleep].pop();
+  const water = HLT.water?.today || 0;
+  document.getElementById('vitalGrid').innerHTML = [
+    { icon:'🏋️', label:'Exercise Today', val: exToday+'min', sub:'active minutes' },
+    { icon:'🥗', label:'Calories Today', val: calToday+'kcal', sub:'estimated intake' },
+    { icon:'🌙', label:'Last Sleep', val: lastSleep?(lastSleep.hours+'h'):'—', sub:lastSleep?.quality||'no data' },
+    { icon:'💧', label:'Water Today', val: water+'ml', sub:'intake' },
+  ].map(v=>`<div class="vital-card">
+    <div class="vital-icon">${v.icon}</div>
+    <div class="vital-label">${v.label}</div>
+    <div class="vital-val">${v.val}</div>
+    <div class="vital-sub">${v.sub}</div>
+  </div>`).join('');
+}
+
+function today() { return new Date().toLocaleDateString('en-PH'); }
+
+function renderHealthSec(sec) {
+  if (sec==='overview') { renderVitals(); return; }
+  if (sec==='exercise') {
+    document.getElementById('hExList').innerHTML = [...HLT.exercise].reverse().slice(0,10).map(e=>
+      `<div class="log-entry"><div class="le-icon">🏋️</div><div class="le-main"><div class="le-title">${e.type}</div><div class="le-sub">${e.duration}min · ${e.date}</div></div><button class="le-del" onclick="hDel('exercise','${e.id}')">✕</button></div>`
+    ).join('') || `<div class="text-muted" style="padding:16px 0;">No workouts logged.</div>`;
+  }
+  if (sec==='diet') {
+    document.getElementById('hDietList').innerHTML = [...HLT.diet].reverse().slice(0,10).map(e=>
+      `<div class="log-entry"><div class="le-icon">🥗</div><div class="le-main"><div class="le-title">${e.food}</div><div class="le-sub">${e.cal?e.cal+'kcal · ':''}${e.date}</div></div><button class="le-del" onclick="hDel('diet','${e.id}')">✕</button></div>`
+    ).join('') || `<div class="text-muted" style="padding:16px 0;">No meals logged.</div>`;
+  }
+  if (sec==='sleep') {
+    document.getElementById('hSleepList').innerHTML = [...HLT.sleep].reverse().slice(0,10).map(e=>
+      `<div class="log-entry"><div class="le-icon">🌙</div><div class="le-main"><div class="le-title">${e.hours}h sleep</div><div class="le-sub">${e.quality} · ${e.date}</div></div><button class="le-del" onclick="hDel('sleep','${e.id}')">✕</button></div>`
+    ).join('') || `<div class="text-muted" style="padding:16px 0;">No sleep logged.</div>`;
+  }
+  if (sec==='water') {
+    document.getElementById('hWaterTotal').textContent = HLT.water?.today || 0;
+  }
+  if (sec==='meds') {
+    document.getElementById('hMedList').innerHTML = [...HLT.meds].reverse().slice(0,10).map(e=>
+      `<div class="log-entry"><div class="le-icon">💊</div><div class="le-main"><div class="le-title">${e.name}</div><div class="le-sub">${e.dose||''} · ${e.date}</div></div><button class="le-del" onclick="hDel('meds','${e.id}')">✕</button></div>`
+    ).join('') || `<div class="text-muted" style="padding:16px 0;">No meds logged.</div>`;
+  }
+}
+
+function hLogExercise() {
+  const type = document.getElementById('hExType').value.trim();
+  const dur  = parseInt(document.getElementById('hExDur').value) || 0;
+  if (!type) { riotAlert('Enter an activity.'); return; }
+  if (!dur)  { riotAlert('Enter duration.'); return; }
+  HLT.exercise.push({ id:'ex'+Date.now(), type, duration:dur, date:today() });
+  hSave(); document.getElementById('hExType').value=''; document.getElementById('hExDur').value='';
+  renderHealthSec('exercise'); renderVitals();
+}
+function hLogDiet() {
+  const food = document.getElementById('hDietFood').value.trim();
+  const cal  = parseInt(document.getElementById('hDietCal').value) || 0;
+  if (!food) { riotAlert('Enter a food description.'); return; }
+  HLT.diet.push({ id:'d'+Date.now(), food, cal, date:today() });
+  hSave(); document.getElementById('hDietFood').value=''; document.getElementById('hDietCal').value='';
+  renderHealthSec('diet'); renderVitals();
+}
+function hLogSleep() {
+  const hours = parseFloat(document.getElementById('hSleepHrs').value) || 0;
+  const qual  = document.getElementById('hSleepQ').value;
+  if (!hours) { riotAlert('Enter hours slept.'); return; }
+  HLT.sleep.push({ id:'s'+Date.now(), hours, quality:qual, date:today() });
+  hSave(); document.getElementById('hSleepHrs').value='';
+  renderHealthSec('sleep'); renderVitals();
+}
+function hLogWater() {
+  const ml = parseInt(document.getElementById('hWaterMl').value) || 0;
+  if (!ml) { riotAlert('Enter ml amount.'); return; }
+  HLT.water.today = (HLT.water.today || 0) + ml;
+  hSave(); document.getElementById('hWaterMl').value='';
+  renderHealthSec('water'); renderVitals();
+}
+function hLogMed() {
+  const name = document.getElementById('hMedName').value.trim();
+  const dose = document.getElementById('hMedDose').value.trim();
+  if (!name) { riotAlert('Enter medicine name.'); return; }
+  HLT.meds.push({ id:'m'+Date.now(), name, dose, date:today() });
+  hSave(); document.getElementById('hMedName').value=''; document.getElementById('hMedDose').value='';
+  renderHealthSec('meds');
+}
+function hDel(section, id) {
+  riotConfirm('Delete this entry?', () => {
+    HLT[section] = HLT[section].filter(e=>e.id!==id);
+    hSave(); renderHealthSec(_hSec); renderVitals();
+  });
+}
+
+/* ═══════════════════════════════════════════════
+   INVENTORY
+═══════════════════════════════════════════════ */
+let _iFilter = 'all';
+function iFilter(f) {
+  _iFilter = f;
+  document.querySelectorAll('[data-icat]').forEach(i=>i.classList.remove('active'));
+  document.querySelector(`[data-icat="${f}"]`)?.classList.add('active');
+  renderInventory();
+}
+const CAT_ICONS = { wardrobe:'👕', consumable:'🧴', book:'📖', equipment:'🔧', other:'📦' };
+
+function renderInventory() {
+  let items = [...INV];
+  if (_iFilter !== 'all') items = items.filter(i=>i.category===_iFilter);
+  document.getElementById('invSubline').textContent = `${items.length} ITEM${items.length!==1?'S':''}`;
+  document.getElementById('invGrid').innerHTML = items.length
+    ? items.map(i=>`<div class="inv-card" onclick="editInvItem('${i.id}')">
+        <div class="inv-card-img" style="display:flex;align-items:center;justify-content:center;font-size:2rem;">${CAT_ICONS[i.category]||'📦'}</div>
+        <div class="inv-card-name">${i.name}</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div class="inv-card-cat">${i.category} · qty ${i.qty||1}</div>
+          <button class="expense-del" onclick="event.stopPropagation();delInvItem('${i.id}')">✕</button>
+        </div>
+      </div>`).join('')
+    : `<div class="text-muted" style="padding:20px 0;grid-column:1/-1;">No items found.</div>`;
+}
+
+function openInvModal()  { document.getElementById('invModal').classList.add('open'); }
+function closeInvModal() { document.getElementById('invModal').classList.remove('open'); }
+function editInvItem(id) {
+  const item = INV.find(i=>i.id===id);
+  if (!item) return;
+  document.getElementById('invName').value  = item.name;
+  document.getElementById('invCat').value   = item.category;
+  document.getElementById('invQty').value   = item.qty||1;
+  document.getElementById('invNotes').value = item.notes||'';
+  openInvModal();
+  document.querySelector('#invModal .modal-title').textContent = 'EDIT ITEM';
+  // Replace save to update
+  const saveBtn = document.querySelector('#invModal [onclick="saveInvItem()"]');
+  saveBtn.onclick = () => updateInvItem(id);
+}
+function saveInvItem() {
+  const name = document.getElementById('invName').value.trim();
+  if (!name) { riotAlert('Enter an item name.'); return; }
+  INV.push({ id:'i'+Date.now(), name, category:document.getElementById('invCat').value, qty:parseInt(document.getElementById('invQty').value)||1, notes:document.getElementById('invNotes').value.trim() });
+  iSave(); closeInvModal(); renderInventory();
+  document.getElementById('invName').value='';
+}
+function updateInvItem(id) {
+  const name = document.getElementById('invName').value.trim();
+  if (!name) { riotAlert('Enter an item name.'); return; }
+  INV = INV.map(i=>i.id===id?{...i,name,category:document.getElementById('invCat').value,qty:parseInt(document.getElementById('invQty').value)||1,notes:document.getElementById('invNotes').value.trim()}:i);
+  iSave(); closeInvModal(); renderInventory();
+  document.querySelector('#invModal .modal-title').textContent = 'ADD ITEM';
+  document.querySelector('#invModal [onclick]').onclick = saveInvItem;
+}
+function delInvItem(id) {
+  riotConfirm('Remove this item?', () => { INV=INV.filter(i=>i.id!==id); iSave(); renderInventory(); });
+}
+
+/* ═══════════════════════════════════════════════
+   CHRONOS
+═══════════════════════════════════════════════ */
+let _calYear  = new Date().getFullYear();
+let _calMonth = new Date().getMonth();
+let _calView  = 'calendar';
+
+function chView(v) {
+  _calView = v;
+  document.querySelectorAll('[data-cv]').forEach(i=>i.classList.remove('active'));
+  document.querySelector(`[data-cv="${v}"]`)?.classList.add('active');
+  document.getElementById('chCalView').classList.toggle('hidden', v!=='calendar');
+  document.getElementById('chAgendaView').classList.toggle('hidden', v!=='agenda');
+  if (v==='calendar') renderCal();
+  if (v==='agenda')   renderAgenda();
+}
+function chFilter(f) {
+  document.querySelectorAll('[data-cf]').forEach(i=>i.classList.remove('active'));
+  document.querySelector(`[data-cf="${f}"]`)?.classList.add('active');
+}
+function chPrev()  { _calMonth--; if(_calMonth<0){_calMonth=11;_calYear--;} renderCal(); }
+function chNext()  { _calMonth++; if(_calMonth>11){_calMonth=0;_calYear++;} renderCal(); }
+function chToday() { _calYear=new Date().getFullYear(); _calMonth=new Date().getMonth(); renderCal(); }
+
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const DAYS   = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+
+function renderCal() {
+  document.getElementById('calMonthTitle').textContent = `${MONTHS[_calMonth]} ${_calYear}`;
+  const first = new Date(_calYear, _calMonth, 1).getDay();
+  const daysInMonth = new Date(_calYear, _calMonth+1, 0).getDate();
+  const todayD = new Date();
+  let html = DAYS.map(d=>`<div class="cal-day-hdr">${d}</div>`).join('');
+  for (let i=0;i<first;i++) html += `<div class="cal-day other-month"></div>`;
+  for (let d=1;d<=daysInMonth;d++) {
+    const isToday = d===todayD.getDate() && _calMonth===todayD.getMonth() && _calYear===todayD.getFullYear();
+    const dateStr = `${_calYear}-${String(_calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const events = CAL_EVENTS.filter(e=>e.date===dateStr || (e.start&&e.start.startsWith(dateStr)));
+    html += `<div class="cal-day${isToday?' today':''}">
+      <div class="cal-day-num">${d}</div>
+      ${events.slice(0,2).map(e=>`<div class="cal-event">${e.title||e.summary||e.name||'Event'}</div>`).join('')}
+    </div>`;
+  }
+  document.getElementById('chCalView').innerHTML = `<div class="cal-grid">${html}</div>`;
+}
+
+function renderAgenda() {
+  const upcoming = CAL_EVENTS.filter(e=>e.date >= today()).slice(0,20);
+  document.getElementById('chAgendaView').innerHTML = upcoming.length
+    ? upcoming.map(e=>`<div class="log-entry"><div class="le-icon">📅</div><div class="le-main"><div class="le-title">${e.title||e.summary||'Event'}</div><div class="le-sub">${e.date||''} · ${e.category||'event'}</div></div></div>`).join('')
+    : `<div class="text-muted" style="padding:20px 0;">No upcoming events.</div>`;
+}
+
+/* ═══════════════════════════════════════════════
+   SETTINGS
+═══════════════════════════════════════════════ */
+function renderSettings() {
+  document.getElementById('setAgentName').value = SETTINGS.agentName || 'ELMO';
+}
+function saveAgentName() {
+  SETTINGS.agentName = document.getElementById('setAgentName').value.trim() || 'ELMO';
+  sSave();
+  document.getElementById('loadoutGreeting').textContent = getGreeting();
+}
+function exportData() {
+  const data = { finance: LS.get(FIN_KEY), quests: QUESTS, health: HLT, inventory: INV };
+  const blob = new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'zenith-export.json'; a.click();
+}
+function clearAllData() {
+  riotConfirm('WIPE ALL DATA? This cannot be undone.', () => {
+    [FIN_KEY,'zenith_quests_riot',HLT_KEY,INV_KEY,SET_KEY].forEach(k=>localStorage.removeItem(k));
+    location.reload();
+  });
+}
+
+/* ═══════════════════════════════════════════════
+   CONFIRM / ALERT DIALOGS
+═══════════════════════════════════════════════ */
+function riotConfirm(msg, onYes, label='CONFIRM') {
+  document.getElementById('riotConfirmMsg').textContent = msg;
+  const ok  = document.getElementById('riotConfirmOk');
+  const can = document.getElementById('riotConfirmCancel');
+  const modal = document.getElementById('riotConfirmModal');
+  ok.textContent = label;
+  ok.style.display = '';
+  can.style.display = '';
+  modal.classList.add('open');
+  ok.onclick  = () => { modal.classList.remove('open'); onYes(); };
+  can.onclick = () => { modal.classList.remove('open'); };
+}
+function riotAlert(msg) {
+  document.getElementById('riotConfirmMsg').textContent = msg;
+  const ok  = document.getElementById('riotConfirmOk');
+  const can = document.getElementById('riotConfirmCancel');
+  const modal = document.getElementById('riotConfirmModal');
+  ok.textContent = 'OK';
+  ok.style.background = 'var(--gold-dim)';
+  ok.style.color = 'var(--gold)';
+  ok.style.border = '1px solid var(--gold)';
+  can.style.display = 'none';
+  modal.classList.add('open');
+  ok.onclick = () => { modal.classList.remove('open'); ok.style.background=''; ok.style.color=''; ok.style.border=''; };
+}
+
+/* ═══════════════════════════════════════════════
+   CLOCK
+═══════════════════════════════════════════════ */
+function tickClock() {
+  const n = new Date();
+  const h = String(n.getHours()).padStart(2,'0');
+  const m = String(n.getMinutes()).padStart(2,'0');
+  document.getElementById('topbarClock').textContent = `${h}:${m}`;
+}
+setInterval(tickClock, 1000);
+tickClock();
+
+/* ═══════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  sLoad();
+  document.getElementById('loadoutGreeting').textContent = getGreeting();
+});
+
+// Close modals on overlay click
+['questModal','goalModal','debtModal','invModal'].forEach(id => {
+  const el = document.getElementById(id);
+  el?.addEventListener('click', e => { if(e.target===el) el.classList.remove('open'); });
+});
+</script>
+</body>
+</html>
